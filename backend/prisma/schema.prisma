@@ -1,0 +1,88 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "go run github.com/steebchen/prisma-client-go"
+  output = ".db"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. ตารางผู้ใช้งาน
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String
+  password  String
+  role      String   @default("USER") // "USER" or "ADMIN"
+  createdAt DateTime @default(now())
+}
+
+// 2. ข้อมูลรุ่นรถ
+model Vehicle {
+  id          Int           @id @default(autoincrement())
+  brand       String        // เช่น BMW
+  model       String        // เช่น G20
+  year        String        // เช่น 2023
+  type        String        // เช่น Sedan
+  
+  // ความสัมพันธ์: รถ 1 รุ่น มีอะไหล่ได้หลายชิ้น
+  parts       PartProduct[]
+}
+
+// 3. หมวดหมู่สินค้า
+model Category {
+  id          Int           @id @default(autoincrement())
+  name        String        // เช่น Interior, Exterior
+  description String?
+  
+  parts       PartProduct[]
+}
+
+// 4. สินค้า/อะไหล่
+model PartProduct {
+  id             Int      @id @default(autoincrement())
+  name           String
+  description    String?
+  imageURL       String?
+  specifications String?  // เก็บข้อมูล JSON หรือ Text ยาวๆ
+
+  // เชื่อมกับ Category
+  categoryId     Int
+  category       Category @relation(fields: [categoryId], references: [id])
+
+  // เชื่อมกับ Vehicle (อะไหล่ชิ้นนี้ใส่รถรุ่นไหน)
+  vehicleId      Int
+  vehicle        Vehicle  @relation(fields: [vehicleId], references: [id])
+
+  // ความสัมพันธ์: สินค้า 1 ชิ้น มีราคาจากหลายร้าน
+  priceListings  PriceListing[]
+}
+
+// 5. ร้านค้า
+model Store {
+  id               Int      @id @default(autoincrement())
+  name             String   // เช่น Autobahn Thailand
+  websiteBaseURL   String?
+  reliabilityScore Float    @default(0.0)
+
+  priceListings    PriceListing[]
+}
+
+// 6. ตารางราคา (หัวใจสำคัญของการเปรียบเทียบ)
+model PriceListing {
+  id          Int         @id @default(autoincrement())
+  price       Float
+  productURL  String      // Link ไปหน้าซื้อของร้านนั้น
+  lastUpdated DateTime    @default(now())
+
+  // เชื่อมกับสินค้า
+  productId   Int
+  product     PartProduct @relation(fields: [productId], references: [id])
+
+  // เชื่อมกับร้านค้า
+  storeId     Int
+  store       Store       @relation(fields: [storeId], references: [id])
+}
