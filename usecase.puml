@@ -1,0 +1,43 @@
+@startuml
+' จัดวาง Layout จากซ้ายไปขวา เพื่อความสวยงาม
+left to right direction
+skinparam packageStyle rectangle
+
+' กำหนด Actors
+actor "Guest User" as Guest
+actor "Member" as Member
+actor "Admin" as Admin
+
+' การสืบทอด (Member ทำได้ทุกอย่างที่ Guest ทำได้)
+Guest <|-- Member
+
+rectangle "Part Point System" {
+    ' สร้าง Use Cases
+    usecase "ค้นหาอะไหล่ (Search Parts)" as UC1
+    usecase "กรองหมวดหมู่ (Filter Category)" as UC2
+    usecase "ดูรายละเอียดสินค้า (View Details)" as UC3
+    usecase "เปรียบเทียบราคา (Compare Prices)" as UC4
+    usecase "ไปยังร้านค้าภายนอก (Visit Store)" as UC5
+    usecase "สมัครสมาชิก/เข้าสู่ระบบ (Login/Register)" as UC6
+    usecase "จัดการข้อมูลอะไหล่ (Manage Data)" as UC7
+}
+
+' ความสัมพันธ์ระหว่าง Actor กับ Use Case
+Guest --> UC1
+Guest --> UC3
+Guest --> UC4
+
+' Member ทำเพิ่มได้คือ Login
+Member --> UC6
+
+' Admin จัดการระบบ
+Admin --> UC7
+
+' ความสัมพันธ์ภายใน Use Cases (Include/Extend)
+' การค้นหา อาจจะรวมการกรองไปด้วย (Include)
+UC1 ..> UC2 : <<include>>
+
+' การเปรียบเทียบราคา อาจนำไปสู่การกดไปร้านค้า (Extend - เป็นทางเลือกเสริม)
+UC4 <.. UC5 : <<extend>>
+
+@enduml

@@ -1,0 +1,71 @@
+generator client {
+  provider = "go run github.com/steebchen/prisma-client-go"
+  output   = "./db"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String
+  password  String
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
+}
+
+model Vehicle {
+  id     Int    @id @default(autoincrement())
+  brand  String // BMW, Honda
+  model  String // G20, Civic
+  year   String
+  type   String // Sedan, SUV
+  parts  PartProduct[]
+}
+
+model Category {
+  id          Int    @id @default(autoincrement())
+  name        String // Interior, Exterior
+  description String?
+  parts       PartProduct[]
+}
+
+model PartProduct {
+  id             Int    @id @default(autoincrement())
+  name           String
+  description    String?
+  imageURL       String?
+  specifications String?
+
+  categoryId     Int
+  category       Category @relation(fields: [categoryId], references: [id])
+
+  vehicleId      Int
+  vehicle        Vehicle  @relation(fields: [vehicleId], references: [id])
+
+  priceListings  PriceListing[]
+}
+
+model Store {
+  id               Int    @id @default(autoincrement())
+  name             String
+  websiteBaseURL   String?
+  reliabilityScore Float  @default(0.0)
+  priceListings    PriceListing[]
+}
+
+model PriceListing {
+  id          Int      @id @default(autoincrement())
+  price       Float
+  productURL  String
+  lastUpdated DateTime @default(now())
+
+  productId   Int
+  product     PartProduct @relation(fields: [productId], references: [id])
+
+  storeId     Int
+  store       Store       @relation(fields: [storeId], references: [id])
+}

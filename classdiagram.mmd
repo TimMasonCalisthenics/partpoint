@@ -1,0 +1,57 @@
+'''mermaid
+classDiagram
+    class User {
+        +int userID
+        +string username
+        +string email
+        +string password
+        +login()
+        +register()
+    }
+
+    class Vehicle {
+        +int vehicleID
+        +string brand  Example: BMW, Honda
+        +string model  Example: G82, Civic
+        +string year
+        +string type   Example: Sedan, SUV
+    }
+
+    class Category {
+        +int categoryID
+        +string name   Example: Interior, Exterior, Engine
+        +string description
+    }
+
+    class PartProduct {
+        +int partID
+        +string name
+        +string description
+        +string imageURL
+        +string specifications
+        +getDetails()
+    }
+
+    class Store {
+        +int storeID
+        +string name   Example: Autobahn Thailand
+        +string websiteBaseURL
+        +string reliabilityScore
+    }
+
+    class PriceListing {
+        +int listingID
+        +float price
+        +string productURL  Link to buy
+        +date lastUpdated
+        +redirectUser()
+    }
+
+    %% Relationships
+    Category "1" -- "0..*" PartProduct : categorizes >
+    Vehicle "1" -- "0..*" PartProduct : compatible with >
+    
+    PartProduct "1" -- "1..*" PriceListing : has prices at >
+    Store "1" -- "0..*" PriceListing : sells >
+    
+    User "1" -- "0..*" Vehicle : favorites (optional) >
