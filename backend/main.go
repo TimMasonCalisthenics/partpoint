@@ -1,46 +1,38 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
-	"net/http"
 
-	"partpoint-backend/prisma/db" // เช็คชื่อ module ใน go.mod ให้ตรงกัน
-
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+
+	"partpoint-backend/prisma/db"
 )
 
 func main() {
-	// 1. โหลด .env
+	// โหลด .env
 	if err := godotenv.Load(); err != nil {
 		log.Println("Info: .env file not found")
 	}
 
-	// 2. เชื่อมต่อ Database
+	// Connect DB
 	client := db.NewClient()
 	if err := client.Prisma.Connect(); err != nil {
 		log.Fatal(err)
 	}
-	defer func() {
-		if err := client.Prisma.Disconnect(); err != nil {
-			panic(err)
-		}
-	}()
+	defer client.Prisma.Disconnect()
 
-	log.Println("✅ Connected to Database!")
+	log.Println("Connected to Database!")
 
-	// 3. สร้าง Server และ API ง่ายๆ
-	http.HandleFunc("/api/test", func(w http.ResponseWriter, r *http.Request) {
-		// เปิด CORS ให้ Frontend (Port 5173) เข้าถึงได้
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-		w.Header().Set("Content-Type", "application/json")
+	// Gin server
+	r := gin.Default()
 
-		response := map[string]string{"message": "Hello from Go Backend!"}
-		json.NewEncoder(w).Encode(response)
+	r.GET("/api/test", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "Hello from Go Backend!",
+		})
 	})
 
 	log.Println("🚀 Server running on http://localhost:8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		log.Fatal(err)
-	}
+	r.Run(":8080")
 }
