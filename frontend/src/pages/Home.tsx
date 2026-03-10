@@ -18,9 +18,17 @@ export default function HomePage() {
       <Navbar />
       {/* ส่วน Hero Section (พื้นที่ต้อนรับ) */}
       <main className="flex-1 relative flex flex-col">
-       <div 
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat bg-[url('/s63engine.jpg')]"
-        >
+        <div className="absolute inset-0 z-0">
+          <video 
+            className="w-full h-full object-cover"
+            autoPlay 
+            muted 
+            loop 
+            playsInline
+          >
+            <source src="/Video/VdoHome_Bg.mp4" type="video/mp4" />
+            <img src="/s63engine.jpg" alt="Fallback background" className="w-full h-full object-cover" />
+          </video>
           {/* แผ่นฟิล์มสีดำ (ถ้าอยากลองเทสว่ารูปมาไหม ให้ลองเอา 2 บรรทัดนี้ออกชั่วคราวได้ครับ) */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90"></div>
@@ -81,11 +89,131 @@ export default function HomePage() {
             </button>
         </div>
 
-        {/* เส้นขอบแดงล่างสุด */}
-        <div className="w-full h-1 bg-red-600"></div>
-       
+                {/* เส้นขอบแดงล่างสุด */}
+                <div className="w-full h-1 bg-red-600"></div>
 
-      </main>
-    </div>
-  );
+            </main>
+
+            {/* ================= หมวดหมู่อะไหล่รถยนต์ ================= */}
+            <section className="relative z-30 w-full bg-black py-10 px-2 md:px-0 flex flex-col items-center">
+                <h2 className="text-2xl md:text-3xl font-bold text-red-600 mb-6 w-full max-w-5xl text-left px-2">หมวดหมู่อะไหล่</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-5xl">
+                    {/* ยางรถยนต์ */}
+                    <div className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{position:'relative'}}>
+                        <span className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{border:'2px solid transparent',background:'linear-gradient(#181818,#181818) padding-box,linear-gradient(90deg,#EC221F 11%,#861311 89%) border-box'}}></span>
+                        <img src="/CarPart/tire_rebg.png" alt="ยางรถยนต์" className="w-20 h-20 object-contain mb-3 relative z-10" />
+                        <span className="text-lg text-white font-semibold relative z-10">ยางรถยนต์</span>
+                    </div>
+                    {/* น้ำมันเครื่อง */}
+                    <div className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{position:'relative'}}>
+                        <span className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{border:'2px solid transparent',background:'linear-gradient(#181818,#181818) padding-box,linear-gradient(90deg,#EC221F 11%,#861311 89%) border-box'}}></span>
+                        <img src="/CarPart/oilcan.png" alt="น้ำมันเครื่อง" className="w-20 h-20 object-contain mb-3 relative z-10" />
+                        <span className="text-lg text-white font-semibold relative z-10">น้ำมันเครื่อง</span>
+                    </div>
+                    {/* โช้คอัพ */}
+                    <div className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{position:'relative'}}>
+                        <span className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{border:'2px solid transparent',background:'linear-gradient(#181818,#181818) padding-box,linear-gradient(90deg,#EC221F 11%,#861311 89%) border-box'}}></span>
+                        <img src="/CarPart/shock_absorbers.png" alt="โช้คอัพ" className="w-20 h-20 object-contain mb-3 relative z-10" />
+                        <span className="text-lg text-white font-semibold relative z-10">โช้คอัพ</span>
+                    </div>
+                    {/* เบรก */}
+                    <div className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{position:'relative'}}>
+                        <span className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{border:'2px solid transparent',background:'linear-gradient(#181818,#181818) padding-box,linear-gradient(90deg,#EC221F 11%,#861311 89%) border-box'}}></span>
+                        <img src="/CarPart/car_break.png" alt="เบรก" className="w-20 h-20 object-contain mb-3 relative z-10" />
+                        <span className="text-lg text-white font-semibold relative z-10">เบรก</span>
+                    </div>
+                    {/* แบตเตอรี่ */}
+                    <div className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{position:'relative'}}>
+                        <span className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{border:'2px solid transparent',background:'linear-gradient(#181818,#181818) padding-box,linear-gradient(90deg,#EC221F 11%,#861311 89%) border-box'}}></span>
+                        <img src="/CarPart/Car_Battery.png" alt="แบตเตอรี่" className="w-20 h-20 object-contain mb-3 relative z-10" />
+                        <span className="text-lg text-white font-semibold relative z-10">แบตเตอรี่</span>
+                    </div>
+                    {/* แม็ก */}
+                    <div className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{position:'relative'}}>
+                        <span className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{border:'2px solid transparent',background:'linear-gradient(#181818,#181818) padding-box,linear-gradient(90deg,#EC221F 11%,#861311 89%) border-box'}}></span>
+                        <img src="/CarPart/car_rims.png" alt="แม็ก" className="w-20 h-20 object-contain mb-3 relative z-10" />
+                        <span className="text-lg text-white font-semibold relative z-10">แม็ก</span>
+                    </div>
+                </div>
+
+                </section>
+
+                {/* ================== SEARCH PART SECTION ================== */}
+                <section className="relative w-full flex justify-center items-center py-10 px-2 md:px-0" style={{minHeight:'480px'}}>
+                    {/* BG image */}
+                    <img src="/CarPart/BG_Search_menu.png" alt="ค้นหาอะไหล่" className="absolute inset-0 w-full h-full object-cover z-0" style={{filter:'brightness(0.5)'}} />
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-black/60 z-0"></div>
+                    {/* Content */}
+                    <div className="relative z-10 w-full max-w-4xl flex flex-col items-center">
+                        <h2 className="text-2xl md:text-3xl font-bold text-red-600 mb-4 text-center">ค้นหาอะไหล่</h2>
+                        <div className="w-full flex items-center mb-6">
+                            <input type="text" placeholder="ค้นหา..." className="flex-1 rounded-md px-4 py-2 text-lg bg-white/90 text-black focus:outline-none" />
+                            <button className="ml-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-3 flex items-center justify-center transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+                                </svg>
+                            </button>
+                        </div>
+                        {/* ฟอร์มเลือกเงื่อนไข */}
+                        <form className="w-full grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 mb-6">
+                            <div className="flex flex-col">
+                                <label className="text-red-500 font-bold mb-1">ยี่ห้อรถยนต์</label>
+                                <select className="rounded px-2 py-1 bg-white/90 text-black">
+                                    <option>เลือกตัวเลือก</option>
+                                </select>
+                            </div>
+                            <div className="flex flex-col">
+                                <label className="text-red-500 font-bold mb-1">รุ่นรถยนต์</label>
+                                <select className="rounded px-2 py-1 bg-white/90 text-black">
+                                    <option>เลือกตัวเลือก</option>
+                                </select>
+                            </div>
+                            <div className="flex flex-col">
+                                <label className="text-red-500 font-bold mb-1">ปีรถยนต์</label>
+                                <select className="rounded px-2 py-1 bg-white/90 text-black">
+                                    <option>เลือกตัวเลือก</option>
+                                </select>
+                            </div>
+                            <div className="flex flex-col">
+                                <label className="text-red-500 font-bold mb-1">รุ่นเครื่องยนต์</label>
+                                <select className="rounded px-2 py-1 bg-white/90 text-black">
+                                    <option>เลือกตัวเลือก</option>
+                                </select>
+                            </div>
+                            <div className="flex flex-col">
+                                <label className="text-red-500 font-bold mb-1">ความจุเครื่องยนต์</label>
+                                <select className="rounded px-2 py-1 bg-white/90 text-black">
+                                    <option>เลือกตัวเลือก</option>
+                                </select>
+                            </div>
+                            <div className="flex flex-col">
+                                <label className="text-red-500 font-bold mb-1">ระบบเครื่องยนต์</label>
+                                <select className="rounded px-2 py-1 bg-white/90 text-black">
+                                    <option>เลือกตัวเลือก</option>
+                                </select>
+                            </div>
+                            <div className="flex flex-col">
+                                <label className="text-red-500 font-bold mb-1">ระบบเกียร์</label>
+                                <select className="rounded px-2 py-1 bg-white/90 text-black">
+                                    <option>เลือกตัวเลือก</option>
+                                </select>
+                            </div>
+                            <div className="flex flex-col">
+                                <label className="text-red-500 font-bold mb-1">ระบบขับเคลื่อน</label>
+                                <select className="rounded px-2 py-1 bg-white/90 text-black">
+                                    <option>เลือกตัวเลือก</option>
+                                </select>
+                            </div>
+                        </form>
+                        <div className="w-full flex justify-between items-center mb-2">
+                            <span></span>
+                            <button className="text-red-500 font-bold hover:underline">ล้างข้อมูล</button>
+                        </div>
+                        <button className="w-full md:w-1/3 bg-red-600 hover:bg-red-700 text-white font-bold text-2xl py-2 rounded-md transition">ค้นหา</button>
+                    </div>
+                </section>
+
+        </div>
+    );
 }
