@@ -136,8 +136,10 @@ export default function HomePage() {
                     </div>
                 </div>
 
+                
                 </section>
 
+                <div className="w-full h-1 bg-red-600"></div>
                 {/* ================== SEARCH PART SECTION ================== */}
                 <section className="relative w-full flex justify-center items-center py-10 px-2 md:px-0" style={{minHeight:'480px'}}>
                     {/* BG image */}
@@ -212,8 +214,10 @@ export default function HomePage() {
                         </div>
                         <button className="w-full md:w-1/3 bg-red-600 hover:bg-red-700 text-white font-bold text-2xl py-2 rounded-md transition">ค้นหา</button>
                     </div>
-                </section>
 
+                    
+                </section>
+                <div className="w-full h-1 bg-red-600"></div>
         </div>
     );
 }
