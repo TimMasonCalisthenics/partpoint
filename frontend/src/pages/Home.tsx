@@ -1,7 +1,15 @@
 import Navbar from '../components/navbar';
 import {ArrowLeft, ArrowRight} from 'lucide-react';
+import ProductCard from '../components/productcard';
+import Footer from '../components/footer';
 
 export default function HomePage() {
+  const mockProducts = [
+    { id: 1, name: 'MICHELIN Pilot Sport 5 - 225/40ZR18', price: 6500, imageUrl: '/CarPart/tire_rebg.png', tags: ['New', 'Sport'] },
+    { id: 2, name: 'BOSCH Hightec Silver Battery', price: 3200, imageUrl: '/CarPart/Car_Battery.png', tags: ['Best Seller'] },
+    { id: 3, name: 'Mobil 1 Full Synthetic 5W-30', price: 2150, imageUrl: '/CarPart/oilcan.png', tags: ['Eco'] },
+    { id: 4, name: 'Brembo Ceramic Brake Pads', price: 4500, imageUrl: '/CarPart/car_break.png', tags: ['Sport', 'New'] },
+  ];
     const brands = [
     { name: 'Ford', src: '/logos/ford.png' },
     { name: 'Toyota', src: '/logos/toyota.png' },
@@ -136,7 +144,41 @@ export default function HomePage() {
                     </div>
                 </div>
 
-                
+                </section>
+
+                <div className="w-full h-1 bg-red-600"></div>
+
+                {/* ================= อะไหล่แนะนำ (Recommended Parts) ================= */}
+                <section className="relative z-30 w-full bg-[#0a0a0a] py-16 px-4 md:px-0 flex flex-col items-center">
+                    <div className="w-full max-w-6xl flex justify-between items-end mb-8 px-2 md:px-0">
+                        <div>
+                            <h2 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center gap-3">
+                                <span className="w-2 h-8 bg-red-600 rounded-full inline-block"></span>
+                                อะไหล่แนะนำ <span className="text-red-600">มาใหม่</span>
+                            </h2>
+                            <p className="text-gray-400 text-lg">คัดสรรอะไหล่คุณภาพสูง เพื่อสมรรถนะที่ดีที่สุดของรถคุณ</p>
+                        </div>
+                        <button className="hidden md:flex text-red-500 hover:text-red-400 font-semibold items-center gap-1 transition-colors">
+                            ดูทั้งหมด <ArrowRight className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
+                        {mockProducts.map((product) => (
+                            <ProductCard 
+                                key={product.id}
+                                id={product.id}
+                                name={product.name}
+                                price={product.price}
+                                imageUrl={product.imageUrl}
+                                tags={product.tags}
+                            />
+                        ))}
+                    </div>
+                    
+                    <button className="md:hidden mt-8 text-red-500 hover:text-red-400 font-semibold flex items-center gap-1 transition-colors">
+                        ดูทั้งหมด <ArrowRight className="w-4 h-4" />
+                    </button>
                 </section>
 
                 <div className="w-full h-1 bg-red-600"></div>
@@ -214,10 +256,10 @@ export default function HomePage() {
                         </div>
                         <button className="w-full md:w-1/3 bg-red-600 hover:bg-red-700 text-white font-bold text-2xl py-2 rounded-md transition">ค้นหา</button>
                     </div>
-
-                    
                 </section>
                 <div className="w-full h-1 bg-red-600"></div>
+
+               <Footer />
         </div>
     );
 }
