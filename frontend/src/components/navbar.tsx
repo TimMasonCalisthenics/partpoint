@@ -74,11 +74,16 @@ export default function Navbar() {
                 to={link.path}
                 // สร้างเส้นคั่น (border-r) ยกเว้นตัวสุดท้าย
                 className={`
-                            px-4 py-1 text-sm font-bold text-gray-100 hover:text-red-500 transition relative
+                            px-4 py-1 text-sm font-bold text-gray-100 hover:text-red-500 transition relative group flex items-center
                             ${index !== navLinks.length - 1 ? 'border-r-2 border-gray-600' : ''}
                         `}
               >
                 {link.name}
+                {link.name === 'เทียบสินค้า' && (
+                  <span className="ml-1.5 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-md leading-none">
+                    3
+                  </span>
+                )}
                 {/* ลูกเล่นเส้นแดงวิ่งด้านล่างเมื่อ Hover */}
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all group-hover:w-full"></span>
               </Link>
