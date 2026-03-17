@@ -25,7 +25,7 @@ export default function Navbar() {
       />
 
       <div className="flex flex-col">
-        <h1 className="text-3xl font-extrabold tracking-tight leading-none flex items-center">
+        <h1 className="text-3xl font-orbitron tracking-tight leading-none flex items-center italic flex">
           <span className="text-white">PART</span>
           <span className="text-red-600 ml-1">POINT</span>
         </h1>

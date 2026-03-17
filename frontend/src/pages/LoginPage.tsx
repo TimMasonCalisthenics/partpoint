@@ -1,86 +1,89 @@
 import { Link } from 'react-router-dom';
+import { User, Lock } from 'lucide-react'; // นำเข้าไอคอนรูปคนและแม่กุญแจ
 
 export default function LoginPage() {
   return (
-    // คลุมทั้งหน้าจอ (min-h-screen) และใช้ flex แบ่งซ้าย-ขวา พื้นหลังสีดำเข้ม
-    <div className="min-h-screen flex bg-[#111111] font-sans">
-      
-      {/* ================= ฝั่งซ้าย: รูปภาพพื้นหลัง ================= */}
-      {/* hidden md:block คือ ซ่อนในมือถือ แต่จอใหญ่ให้แสดงผลกินพื้นที่ 50% (w-1/2) */}
-      {/* border-r-[3px] border-red-600 คือ เส้นคั่นสีแดงฝั่งขวาของรูป */}
-      <div 
-        className="hidden md:block w-1/2 bg-cover bg-center border-r-[3px] border-red-600 relative"
-        style={{ backgroundImage: "url('/dodgehellcat.png')" }} // <-- อย่าลืมเอารูปไปใส่ใน public
-      >
-        {/* ใส่ overlay สีดำบางๆ ทับรูปนิดหน่อยเพื่อความเท่ (ถ้าไม่ชอบลบออกได้) */}
-        <div className="absolute inset-0 bg-black/20"></div>
-      </div>
+    // พื้นหลังคลุมเต็มหน้าจอ จัดให้อยู่กึ่งกลาง
+    <div 
+      className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center relative font-sans"
+      style={{ backgroundImage: "url('/bmw_m2_login.png')" }} // <-- หารูปรถสวยๆ มาตั้งชื่อนี้ไว้ใน public นะครับ
+    >
+      {/* แผ่นฟิล์มสีดำคลุมทับรูปภาพพื้นหลัง ให้ตัวหนังสือและกล่องเด้งขึ้นมา */}
+      <div className="absolute inset-0 bg-black/60"></div>
 
-      {/* ================= ฝั่งขวา: ฟอร์ม Login ================= */}
-      {/* w-full หรือ 50% ในจอใหญ่ จัดให้อยู่กึ่งกลาง */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-8 md:p-12 relative">
-        
-        {/* กล่องเนื้อหาฟอร์ม */}
-        <div className="w-full max-w-md">
+      {/* ================= กล่องเนื้อหาตรงกลาง ================= */}
+      <div className="relative z-10 w-full max-w-md flex flex-col items-center px-4">
+
+        {/* 1. โซนโลโก้ (อยู่เหนือกล่องล็อกอิน) */}
+        <div className="mb-6 flex flex-col items-center">
+          {/* โลโก้รูปเฟือง (ใช้รูปจาก public) */}
+          <img src="/partpointLogo.png" alt="PARTPOINT Logo" className="w-20 h-20 mb-2 object-contain" />
           
-          {/* 1. โลโก้ */}
-          <h1 className="text-4xl font-extrabold mb-10 tracking-wide">
+          {/* ชื่อเว็บ */}
+          <h1 className="text-4xl font-orbitron tracking-widest italic flex">
             <span className="text-white">PART</span>
-            <span className="text-red-600 ml-2">POINT</span>
+            <span className="text-red-600">POINT</span>
           </h1>
+          <p className="text-gray-300 text-[0.65rem] tracking-[0.2em] mt-1 uppercase">Best automotive part finder</p>
+        </div>
 
-          {/* 2. ฟอร์ม */}
-          <form className="flex flex-col gap-5">
-            
+        {/* 2. กล่องฟอร์มเข้าสู่ระบบ (สีเทาเข้ม) */}
+        <div className="bg-[#2a2a2a] w-full rounded-2xl p-8 md:p-10 shadow-2xl">
+          <h2 className="text-2xl font-bold text-white text-center mb-8">เข้าสู่ระบบ</h2>
+
+          <form className="flex flex-col gap-6">
+
             {/* ช่องชื่อผู้ใช้งาน */}
-            <div>
-              <label className="block text-red-600 font-bold mb-2 text-lg">ชื่อผู้ใช้งาน</label>
+            <div className="relative">
+              {/* ไอคอน User */}
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <User className="text-white w-6 h-6" />
+              </div>
               <input 
                 type="text" 
-                placeholder="กรอกชื่อผู้ใช้" 
-                className="w-full px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 text-gray-900 bg-white"
+                placeholder="กรอกชื่อผู้ใช้งาน" 
+                // พื้นหลังดำ ขอบแดง ตามรูปเป๊ะ
+                className="w-full bg-black text-white pl-12 pr-4 py-3.5 rounded-xl border-2 border-red-600 focus:outline-none focus:ring-1 focus:ring-red-600 placeholder-white font-medium"
               />
             </div>
 
             {/* ช่องรหัสผ่าน */}
-            <div>
-              <label className="block text-red-600 font-bold mb-2 text-lg">รหัสผ่าน</label>
+            <div className="relative">
+              {/* ไอคอน Lock */}
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Lock className="text-white w-6 h-6" />
+              </div>
               <input 
                 type="password" 
-                placeholder="กรอกรหัสผ่าน" 
-                className="w-full px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 text-gray-900 bg-white"
+                placeholder="รหัสผ่าน" 
+                // พื้นหลังดำ ขอบขาว (แต่คลิกแล้วจะเปลี่ยนเป็นขอบแดง)
+                className="w-full bg-black text-white pl-12 pr-4 py-3.5 rounded-xl border-2 border-white focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 placeholder-white font-medium transition"
               />
             </div>
 
-            {/* ลืมรหัสผ่าน */}
-            <div className="flex justify-end mt-[-10px]">
-              <Link to="/forgot-password" className="text-red-600 text-sm font-bold hover:text-white transition">
-                ลืมรหัสผ่าน ?
-              </Link>
-            </div>
-
             {/* ปุ่มเข้าสู่ระบบ */}
-            <div className="flex justify-center mt-2">
+            <div className="mt-4 flex justify-center">
               <button 
                 type="button" 
-                className="bg-[#e62020] hover:bg-red-700 text-white font-bold text-lg py-2 px-12 rounded-lg transition transform hover:scale-105 shadow-[0_4px_14px_0_rgba(229,32,32,0.39)]"
+                // ไล่สีแดงจากบนลงล่างให้ดูมีมิติ
+                className="bg-gradient-to-b from-[#e62020] to-[#991515] hover:from-red-500 hover:to-red-700 text-white font-bold text-lg py-3 px-12 rounded-xl transition transform hover:scale-105 shadow-[0_4px_15px_rgba(229,32,32,0.4)] flex items-center gap-1"
               >
-                เข้าสู่ระบบ
+                เข้าสู่ระบบ<span className="text-sm tracking-tighter mt-0.5">&gt;&gt;</span>
               </button>
             </div>
+
           </form>
 
-          {/* 3. ลิงก์ไปหน้าสมัครสมาชิก (จัดชิดขวาล่าง) */}
-          <div className="mt-16 text-right">
-            <p className="text-gray-400 text-sm mb-1">ยังไม่มี สมาชิก?</p>
-            <Link to="/register" className="text-red-600 font-bold text-lg hover:text-white transition">
+          {/* 3. ลิงก์สมัครสมาชิก */}
+          <div className="mt-8 text-center">
+            <span className="text-gray-300 text-sm font-medium">ยังไม่มีสมาชิก? </span>
+            <Link to="/register" className="text-red-600 font-bold text-sm hover:text-white transition">
               สมัครสมาชิก
             </Link>
           </div>
 
         </div>
       </div>
-
     </div>
   );
 }
