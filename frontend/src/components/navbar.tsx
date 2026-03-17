@@ -13,36 +13,26 @@ export default function Navbar() {
   ];
 
   return (
-    // --- ส่วน Container หลัก ---
-    // เปลี่ยนพื้นหลังเป็นสีดำเข้ม (bg-[#1a1a1a])
-    // เพิ่มขอบล่างสีแดงหนาๆ (border-b-4 border-red-600)
-    // สีตัวอักษรหลักเป็นสีขาว (text-white)
+    
     <nav className="bg-[#2c2a2a] border-b-4 border-red-600 sticky top-0 z-50 text-white shadow-lg">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link to="/" className="flex items-center gap-3 group no-underline">
     
-        {/* 1. รูปโลโก้ */}
-        {/* หมายเหตุ: ใน Vite ถ้าไฟล์อยู่ใน public ไม่ต้องใส่ /public นำหน้าครับ ใส่ /partpointLogo.png ได้เลย */}
       <img 
         src="/partpointLogowhite.png" 
         alt="PARTPOINT Logo"
         className="w-14 h-14 object-contain" 
       />
 
-      {/* 2. ข้อความโลโก้ */}
       <div className="flex flex-col">
         <h1 className="text-3xl font-extrabold tracking-tight leading-none flex items-center">
           <span className="text-white">PART</span>
           <span className="text-red-600 ml-1">POINT</span>
         </h1>
-          {/* ขีดเส้นใต้ (ถ้าต้องการ) */}
-          {/* <div className="h-0.5 bg-red-600 w-full my-0.5"></div> */}
+          
       </div>
 
   </Link>
-        
-
-
         {/* ================= โซนขวา: ค้นหา, ล็อกอิน และเมนู ================= */}
         {/* ใช้ flex-col เพื่อจัดเรียงเป็น 2 แถว (บน/ล่าง) และ items-end เพื่อชิดขวา */}
         <div className="flex flex-col items-end gap-3">
