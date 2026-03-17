@@ -17,7 +17,7 @@ export default function LoginPage() {
         {/* 1. โซนโลโก้ (อยู่เหนือกล่องล็อกอิน) */}
         <div className="mb-6 flex flex-col items-center">
           {/* โลโก้รูปเฟือง (ใช้รูปจาก public) */}
-          <img src="/partpointLogo.png" alt="PARTPOINT Logo" className="w-20 h-20 mb-2 object-contain" />
+          <img src="/partpointLogowhite.png" alt="PARTPOINT Logo" className="w-20 h-20 mb-2 object-contain" />
           
           {/* ชื่อเว็บ */}
           <h1 className="text-4xl font-orbitron tracking-widest italic flex">
