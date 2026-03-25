@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm"
 
 	"backend/internal/auth"
+	"backend/internal/middleware"
 )
 
 func main() {
@@ -48,9 +49,19 @@ func main() {
 	r := gin.Default()
 
 	// --- Auth module routes ---
-	userRepo := auth.NewUserRepository(db)
-	userService := auth.NewUserService(userRepo)
+	userService := auth.NewUserService(auth.NewUserRepository(db)) // db ต้องสร้างก่อน
 	userHandler := auth.NewUserHandler(userService)
+	// userRepo := auth.NewUserRepository(db)
+
+	// protected routes
+	protected := r.Group("/api")
+	protected.Use(middleware.AuthMiddleware())
+	{
+		protected.GET("/profile", func(c *gin.Context) {
+			c.JSON(200, gin.H{"message": "this is protected"})
+		})
+		protected.POST("/logout", userHandler.Logout)
+	}
 
 	r.POST("/register", userHandler.Register)
 	r.POST("/login", userHandler.Login)

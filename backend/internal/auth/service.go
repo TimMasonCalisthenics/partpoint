@@ -37,12 +37,13 @@ func (s *userService) Register(user User) (User, error) {
 
 // LOGIN
 func (s *userService) Login(req LoginRequest) (User, error) {
-	user, _ := s.repo.FindByEmail(req.Email)
-
-	if user.Email == "" {
+	// ค้นหาด้วย email หรือ username
+	user, err := s.repo.FindByIdentifier(req.Identifier)
+	if err != nil || user.ID == 0 {
 		return user, errors.New("user not found")
 	}
 
+	// เช็ค password
 	if user.Password != req.Password {
 		return user, errors.New("invalid password")
 	}

@@ -14,6 +14,6 @@ func (User) TableName() string {
 
 // ใช้ตอน login
 type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Identifier string `json:"identifier"` // จะเป็น email หรือ username
+	Password   string `json:"password"`
 }

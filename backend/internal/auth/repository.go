@@ -9,7 +9,7 @@ import (
 type UserRepository interface {
 	GetAll() ([]User, error)
 	Create(user User) (User, error)
-	FindByEmail(email string) (User, error) // 👈 เพิ่ม
+	FindByIdentifier(email string) (User, error)
 }
 
 type userRepo struct {
@@ -37,9 +37,11 @@ func (r *userRepo) GetAll() ([]User, error) {
 	return users, nil
 }
 
-func (r *userRepo) FindByEmail(email string) (User, error) {
+func (r *userRepo) FindByIdentifier(identifier string) (User, error) {
 	var user User
-	if err := r.db.Where("email = ?", email).First(&user).Error; err != nil {
+	if err := r.db.
+		Where("email = ? OR username = ?", identifier, identifier).
+		First(&user).Error; err != nil {
 		return User{}, err
 	}
 	return user, nil
