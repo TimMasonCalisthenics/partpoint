@@ -12,6 +12,8 @@ import (
 
 	"backend/internal/auth"
 	"backend/internal/middleware"
+	"backend/internal/product"
+	"backend/internal/router"
 )
 
 func main() {
@@ -67,11 +69,11 @@ func main() {
 	r.POST("/login", userHandler.Login)
 	r.POST("/logout", userHandler.Logout)
 
-	// --- ถ้ามี module อื่น ๆ ก็ทำแบบเดียวกัน ---
-	// productRepo := product.NewProductRepository(db)
-	// productService := product.NewProductService(productRepo)
-	// productHandler := product.NewProductHandler(productService)
-	// r.GET("/products", productHandler.GetAll)
+	productRepo := product.NewProductRepository(db)
+	productService := product.NewProductService(productRepo)
+	productHandler := product.NewProductHandler(productService)
+
+	router.SetupProductRoutes(r, productHandler)
 
 	log.Println("Server running on http://localhost:8080")
 
