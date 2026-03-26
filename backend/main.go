@@ -15,6 +15,7 @@ import (
 	"backend/internal/price"
 	"backend/internal/product"
 	"backend/internal/router"
+	"backend/internal/store"
 )
 
 func main() {
@@ -44,11 +45,6 @@ func main() {
 
 	log.Println("Connected to Database!")
 
-	// Auto migrate สร้างตาราง User
-	if err := db.AutoMigrate(&auth.User{}); err != nil {
-		log.Fatal("AutoMigrate failed:", err)
-	}
-
 	r := gin.Default()
 
 	// --- Auth module routes ---
@@ -68,7 +64,7 @@ func main() {
 
 	r.POST("/register", userHandler.Register)
 	r.POST("/login", userHandler.Login)
-	r.POST("/logout", userHandler.Logout)
+	// r.POST("/logout", userHandler.Logout)
 
 	//product
 	productRepo := product.NewProductRepository(db)
@@ -83,6 +79,13 @@ func main() {
 	priceHandler := price.NewPriceHandler(priceService)
 
 	router.SetupPriceRoutes(r, priceHandler)
+
+	//store
+	storeRepo := store.NewStoreRepository(db)
+	storeService := store.NewStoreService(storeRepo)
+	storeHandler := store.NewStoreHandler(storeService)
+
+	router.SetupStoreRoutes(r, storeHandler)
 
 	log.Println("Server running on http://localhost:8080")
 
