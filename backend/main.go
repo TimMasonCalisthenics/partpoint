@@ -12,6 +12,7 @@ import (
 
 	"backend/internal/auth"
 	"backend/internal/middleware"
+	"backend/internal/price"
 	"backend/internal/product"
 	"backend/internal/router"
 )
@@ -69,11 +70,19 @@ func main() {
 	r.POST("/login", userHandler.Login)
 	r.POST("/logout", userHandler.Logout)
 
+	//product
 	productRepo := product.NewProductRepository(db)
 	productService := product.NewProductService(productRepo)
 	productHandler := product.NewProductHandler(productService)
 
 	router.SetupProductRoutes(r, productHandler)
+
+	//price compare
+	priceRepo := price.NewPriceRepository(db)
+	priceService := price.NewPriceService(priceRepo)
+	priceHandler := price.NewPriceHandler(priceService)
+
+	router.SetupPriceRoutes(r, priceHandler)
 
 	log.Println("Server running on http://localhost:8080")
 
