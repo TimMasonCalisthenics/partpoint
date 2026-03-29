@@ -18,6 +18,7 @@ import (
 	"backend/internal/router"
 	"backend/internal/store"
 	"backend/internal/user"
+	"backend/internal/vehicle"
 )
 
 func main() {
@@ -103,11 +104,24 @@ func main() {
 	// ส่ง protected group เข้าไปเลย ป้องกัน route ซ้ำ + บังคับ auth
 	router.SetupUserRoutes(protected, userHandler)
 
+	// =========================
+	// FAVORITE MODULE
+	// =========================
 	favRepo := favourite.NewFavouriteRepository(db)
 	favService := favourite.NewFavouriteService(favRepo)
 	favHandler := favourite.NewFavouriteHandler(favService)
 
 	router.SetupFavouriteRoutes(protected, favHandler)
+
+	// =========================
+	// VEHICLE MODULE
+	// =========================
+	vehicleRepo := vehicle.NewVehicleRepository(db)
+	vehicleService := vehicle.NewVehicleService(vehicleRepo)
+	vehicleHandler := vehicle.NewVehicleHandler(vehicleService)
+
+	//ต้อง login ก่อน
+	router.SetupVehicleRoutes(protected, vehicleHandler)
 
 	log.Println("Server running on http://localhost:8080")
 
