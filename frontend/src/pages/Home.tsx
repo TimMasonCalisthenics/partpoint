@@ -2,8 +2,36 @@ import Navbar from '../components/navbar';
 import {ArrowLeft, ArrowRight} from 'lucide-react';
 import ProductCard from '../components/productcard';
 import Footer from '../components/footer';
+import {useState} from 'react';
 
 export default function HomePage() {
+
+  const [selectedBrand, setSelectedBrand] = useState('');
+  const [selectedModel, setSelectedModel] = useState('');
+
+  const carData: { [key: string]: string[] } = {
+        Toyota: ['Hilux Revo Prerunner', 'Hilux Revo Z edition', 'Camry', 'Corolla', 'Yaris'],
+        Ford: ['Ranger', 'Ranger Raptor', 'Everest', 'Mustang'],
+        BMW: ['1 series', '2 series', '3 series', '4 series', '5 series','6 series','7 series','8 series','X1','X2', 'X3', 'X4', 'X5','X6','X7'],
+        Honda: ['City', 'Civic', 'CR:V', 'HR:V', 'WR:V','Jazz'],
+        Mercedes_Benz: ['C-class','E-class','S-class','GLC-class','CLS-class','CLA-class','CLE-class','GLE-class','GLS-class'],
+    };
+   
+    const brandsList = Object.keys(carData);
+
+    // ฟังก์ชันเมื่อเปลี่ยนยี่ห้อรถ ให้ล้างค่ารุ่นรถเก่าทิ้ง
+    const handleBrandChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedBrand(e.target.value);
+        setSelectedModel('');
+    };
+
+    // ฟังก์ชันปุ่มล้างข้อมูล
+    const handleClearData = (e: React.MouseEvent) => {
+        e.preventDefault();
+        setSelectedBrand('');
+        setSelectedModel('');
+    };
+
   const mockProducts = [
     { id: 1, name: 'MICHELIN Pilot Sport 5 - 225/40ZR18', price: 6500, imageUrl: '/CarPart/tire_rebg.png', tags: ['New', 'Sport'] },
     { id: 2, name: 'BOSCH Hightec Silver Battery', price: 3200, imageUrl: '/CarPart/Car_Battery.png', tags: ['Best Seller'] },
@@ -203,56 +231,85 @@ export default function HomePage() {
                         <form className="w-full grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 mb-6">
                             <div className="flex flex-col">
                                 <label className="text-red-500 font-bold mb-1">ยี่ห้อรถยนต์</label>
-                                <select className="rounded px-2 py-1 bg-white/90 text-black">
-                                    <option>เลือกตัวเลือก</option>
+                                <select className="rounded px-2 py-1 bg-white/90 text-black disabled::bg-gray-30"
+                                    value = {selectedBrand}
+                                    onChange = {handleBrandChange}
+                                >
+                                    <option value = "">เลือกตัวเลือก</option>
+                                    {brandsList.map((brand) => (
+                                        <option key = {brand} value = {brand}>{brand}</option>
+                                    ))}
                                 </select>
                             </div>
                             <div className="flex flex-col">
                                 <label className="text-red-500 font-bold mb-1">รุ่นรถยนต์</label>
-                                <select className="rounded px-2 py-1 bg-white/90 text-black">
-                                    <option>เลือกตัวเลือก</option>
+                                <select className="rounded px-2 py-1 bg-white/90 text-black disabled::bg-gray-400 disable:text-gray-700"
+                                    value = {selectedModel}
+                                    onChange = {(e) => setSelectedModel(e.target.value)}
+                                    disabled = {!selectedBrand}
+                                >
+                                    <option value = " ">เลือกตัวเลือก</option>
+                                    {selectedBrand && carData[selectedBrand].map((model) => (
+                                        <option key = {model} value = {model}>{model}</option>
+                                    ))}
                                 </select>
                             </div>
                             <div className="flex flex-col">
                                 <label className="text-red-500 font-bold mb-1">ปีรถยนต์</label>
                                 <select className="rounded px-2 py-1 bg-white/90 text-black">
                                     <option>เลือกตัวเลือก</option>
+                                    <option>2016-2020</option>
+                                    <option>2015-2022</option>
                                 </select>
                             </div>
                             <div className="flex flex-col">
                                 <label className="text-red-500 font-bold mb-1">รุ่นเครื่องยนต์</label>
                                 <select className="rounded px-2 py-1 bg-white/90 text-black">
                                     <option>เลือกตัวเลือก</option>
+                                    <option>1GD-FTV</option>
+                                    <option>2GD-FTV</option>
+                                    <option>ZSD-422</option>
                                 </select>
                             </div>
                             <div className="flex flex-col">
                                 <label className="text-red-500 font-bold mb-1">ความจุเครื่องยนต์</label>
                                 <select className="rounded px-2 py-1 bg-white/90 text-black">
                                     <option>เลือกตัวเลือก</option>
+                                    <option>2.4 litre(2GD-FTV)</option>
+                                    <option>2.8 litre(1GD-FTV)</option>
+                                    <option>2.2 litre(ZSD-422)</option>
                                 </select>
                             </div>
                             <div className="flex flex-col">
                                 <label className="text-red-500 font-bold mb-1">ระบบเครื่องยนต์</label>
                                 <select className="rounded px-2 py-1 bg-white/90 text-black">
                                     <option>เลือกตัวเลือก</option>
+                                    <option>ดีเซล</option>
+                                    <option>เบนซิน</option>
                                 </select>
                             </div>
                             <div className="flex flex-col">
                                 <label className="text-red-500 font-bold mb-1">ระบบเกียร์</label>
                                 <select className="rounded px-2 py-1 bg-white/90 text-black">
                                     <option>เลือกตัวเลือก</option>
+                                    <option>เกียร์อัตโนมัติ</option>
+                                    <option>เกียร์ธรรมดา</option>
                                 </select>
                             </div>
                             <div className="flex flex-col">
                                 <label className="text-red-500 font-bold mb-1">ระบบขับเคลื่อน</label>
                                 <select className="rounded px-2 py-1 bg-white/90 text-black">
                                     <option>เลือกตัวเลือก</option>
+                                    <option>ขับเคลื่อน 2 ล้อหน้า</option>
+                                    <option>ขับเคลื่อน 2 ล้อหลัง</option>
+                                    <option>ขับเคลื่อน 4 ล้อ Part-Time</option>
+                                    <option>ขับเคลื่อน 4 ล้อ AWD</option>
                                 </select>
                             </div>
                         </form>
                         <div className="w-full flex justify-between items-center mb-2">
                             <span></span>
-                            <button className="text-red-500 font-bold hover:underline">ล้างข้อมูล</button>
+                            <button className="text-red-500 font-bold hover:underline" onClick={handleClearData} >ล้างข้อมูล</button>
                         </div>
                         <button className="w-full md:w-1/3 bg-red-600 hover:bg-red-700 text-white font-bold text-2xl py-2 rounded-md transition">ค้นหา</button>
                     </div>
