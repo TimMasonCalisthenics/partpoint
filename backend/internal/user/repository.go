@@ -1,25 +1,36 @@
 package user
 
 import (
-	"backend/internal/config"
+	"gorm.io/gorm"
 )
 
-func GetUsers() ([]User, error) {
-	db := config.DB
+type UserRepository interface {
+	GetByID(id int) (User, error)
+	GetFavourites(userID int) ([]Favourite, error)
+	AddFavourite(fav Favourite) (Favourite, error)
+}
 
-	rows, err := db.Query(`SELECT id, email, username FROM "User"`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
+type userRepository struct {
+	db *gorm.DB
+}
 
-	var users []User
+func NewUserRepository(db *gorm.DB) UserRepository {
+	return &userRepository{db}
+}
 
-	for rows.Next() {
-		var u User
-		rows.Scan(&u.ID, &u.Email, &u.Username)
-		users = append(users, u)
-	}
+func (r *userRepository) GetByID(id int) (User, error) {
+	var u User
+	err := r.db.First(&u, id).Error
+	return u, err
+}
 
-	return users, nil
+func (r *userRepository) GetFavourites(userID int) ([]Favourite, error) {
+	var favs []Favourite
+	err := r.db.Where("userId = ?", userID).Find(&favs).Error
+	return favs, err
+}
+
+func (r *userRepository) AddFavourite(fav Favourite) (Favourite, error) {
+	err := r.db.Create(&fav).Error
+	return fav, err
 }

@@ -16,6 +16,7 @@ import (
 	"backend/internal/product"
 	"backend/internal/router"
 	"backend/internal/store"
+	"backend/internal/user"
 )
 
 func main() {
@@ -24,20 +25,19 @@ func main() {
 		log.Println("Info: .env file not found")
 	}
 
-	// อ่าน config DB จาก .env
+	// อ่าน config DB
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
 
-	// สร้าง DSN แบบถูกต้อง
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		dbHost, dbUser, dbPass, dbName, dbPort,
 	)
 
-	// เปิด connection
+	// connect DB
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
@@ -47,45 +47,60 @@ func main() {
 
 	r := gin.Default()
 
-	// --- Auth module routes ---
-	userService := auth.NewUserService(auth.NewUserRepository(db)) // db ต้องสร้างก่อน
-	userHandler := auth.NewUserHandler(userService)
-	// userRepo := auth.NewUserRepository(db)
+	// =========================
+	// AUTH MODULE
+	// =========================
+	authRepo := auth.NewUserRepository(db)
+	authService := auth.NewUserService(authRepo)
+	authHandler := auth.NewUserHandler(authService)
 
-	// protected routes
-	protected := r.Group("/api")
+	r.POST("/register", authHandler.Register)
+	r.POST("/login", authHandler.Login)
+
+	// =========================
+	// PROTECTED ROUTES
+	// =========================
+	protected := r.Group("")
 	protected.Use(middleware.AuthMiddleware())
-	{
-		protected.GET("/profile", func(c *gin.Context) {
-			c.JSON(200, gin.H{"message": "this is protected"})
-		})
-		protected.POST("/logout", userHandler.Logout)
-	}
 
-	r.POST("/register", userHandler.Register)
-	r.POST("/login", userHandler.Login)
-	// r.POST("/logout", userHandler.Logout)
+	protected.POST("/logout", authHandler.Logout)
 
-	//product
+	// =========================
+	// PRODUCT MODULE
+	// =========================
 	productRepo := product.NewProductRepository(db)
 	productService := product.NewProductService(productRepo)
 	productHandler := product.NewProductHandler(productService)
 
 	router.SetupProductRoutes(r, productHandler)
 
-	//price compare
+	// =========================
+	// PRICE MODULE
+	// =========================
 	priceRepo := price.NewPriceRepository(db)
 	priceService := price.NewPriceService(priceRepo)
 	priceHandler := price.NewPriceHandler(priceService)
 
 	router.SetupPriceRoutes(r, priceHandler)
 
-	//store
+	// =========================
+	// STORE MODULE
+	// =========================
 	storeRepo := store.NewStoreRepository(db)
 	storeService := store.NewStoreService(storeRepo)
 	storeHandler := store.NewStoreHandler(storeService)
 
 	router.SetupStoreRoutes(r, storeHandler)
+
+	// =========================
+	// USER MODULE (PROFILE + FAVOURITES)
+	// =========================
+	userRepo := user.NewUserRepository(db)
+	userService := user.NewUserService(userRepo)
+	userHandler := user.NewUserHandler(userService)
+
+	// ส่ง protected group เข้าไปเลย ป้องกัน route ซ้ำ + บังคับ auth
+	router.SetupUserRoutes(protected, userHandler)
 
 	log.Println("Server running on http://localhost:8080")
 

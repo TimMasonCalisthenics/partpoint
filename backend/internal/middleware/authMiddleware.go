@@ -22,6 +22,7 @@ func init() {
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
 		// อ่าน token จาก cookie
 		tokenString, err := c.Cookie("token")
 		if err != nil {
@@ -44,7 +45,34 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// ถ้า token ถูกต้อง → ไป handler ต่อ
+		// ดึง claims ออกมา
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid claims"})
+			c.Abort()
+			return
+		}
+
+		// ดึง user_id จาก token
+		userIDFloat, ok := claims["user_id"].(float64)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user_id"})
+			c.Abort()
+			return
+		}
+
+		userID := int(userIDFloat)
+
+		// set ให้ handler ใช้
+		c.Set("userID", userID)
+
+		// (optional) ถ้ามี role ในอนาคต
+		if role, ok := claims["role"].(string); ok {
+			c.Set("role", role)
+		}
+
 		c.Next()
+
+		log.Println("USER ID FROM TOKEN:", userID)
 	}
 }

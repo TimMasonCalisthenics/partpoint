@@ -83,7 +83,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 		tokenString,
 		3600*24,
 		"/",
-		"localhost",
+		"",
 		false,
 		true,
 	)
