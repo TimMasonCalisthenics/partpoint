@@ -6,16 +6,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupProductRoutes(r *gin.Engine, productHandler *product.ProductHandler) {
+func SetupProductRoutes(r *gin.Engine, admin *gin.RouterGroup, h *product.ProductHandler) {
 
-	api := r.Group("/products")
+	// PUBLIC
+	p := r.Group("/products")
+	{
+		p.GET("", h.GetProducts)
+		p.GET("/:id", h.GetProductByID)
+	}
 
-	// ===== Guest =====
-	api.GET("", productHandler.GetProducts)        // search + filter
-	api.GET("/:id", productHandler.GetProductByID) // detail + compare price
-
-	// ===== Admin =====
-	api.POST("", productHandler.CreateProduct)
-	api.PUT("/:id", productHandler.UpdateProduct)
-	api.DELETE("/:id", productHandler.DeleteProduct)
+	// ADMIN
+	pAdmin := admin.Group("/products")
+	{
+		pAdmin.POST("", h.CreateProduct)
+		pAdmin.PUT("/:id", h.UpdateProduct)
+		pAdmin.DELETE("/:id", h.DeleteProduct)
+	}
 }

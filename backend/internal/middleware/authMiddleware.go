@@ -22,7 +22,7 @@ func init() {
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-
+		log.Println("=== AUTH MIDDLEWARE RUNNING ===")
 		// อ่าน token จาก cookie
 		tokenString, err := c.Cookie("token")
 		if err != nil {
@@ -74,5 +74,24 @@ func AuthMiddleware() gin.HandlerFunc {
 		c.Next()
 
 		log.Println("USER ID FROM TOKEN:", userID)
+	}
+}
+
+// ตรวจสอบว่าเป็น admin
+func AdminMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		log.Println("=== ADMIN MIDDLEWARE RUNNING ===")
+
+		role, exists := c.Get("role")
+
+		log.Println("ROLE FROM TOKEN:", role)
+		log.Printf("TYPE: %T\n", role)
+
+		if !exists || role != "admin" {
+			c.JSON(http.StatusForbidden, gin.H{"error": "admin access required"})
+			c.Abort()
+			return
+		}
+		c.Next()
 	}
 }

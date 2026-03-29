@@ -28,7 +28,7 @@ func main() {
 		log.Println("Info: .env file not found")
 	}
 
-	// อ่าน config DB
+	// DB config
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
 	dbUser := os.Getenv("DB_USER")
@@ -61,12 +61,19 @@ func main() {
 	r.POST("/login", authHandler.Login)
 
 	// =========================
-	// PROTECTED ROUTES
+	// USER PROTECTED (login only)
 	// =========================
 	protected := r.Group("")
 	protected.Use(middleware.AuthMiddleware())
 
 	protected.POST("/logout", authHandler.Logout)
+
+	// =========================
+	// ADMIN PROTECTED (login + admin)
+	// =========================
+	adminProtected := r.Group("")
+	adminProtected.Use(middleware.AuthMiddleware())
+	adminProtected.Use(middleware.AdminMiddleware())
 
 	// =========================
 	// PRODUCT MODULE
@@ -75,7 +82,7 @@ func main() {
 	productService := product.NewProductService(productRepo)
 	productHandler := product.NewProductHandler(productService)
 
-	router.SetupProductRoutes(r, productHandler)
+	router.SetupProductRoutes(r, adminProtected, productHandler)
 
 	// =========================
 	// PRICE MODULE
@@ -93,7 +100,7 @@ func main() {
 	storeService := store.NewStoreService(storeRepo)
 	storeHandler := store.NewStoreHandler(storeService)
 
-	router.SetupStoreRoutes(r, storeHandler)
+	router.SetupStoreRoutes(r, adminProtected, storeHandler)
 
 	// =========================
 	// USER PROFILE MODULE
@@ -102,7 +109,6 @@ func main() {
 	userService := user.NewUserService(userRepo)
 	userHandler := user.NewUserHandler(userService)
 
-	// ส่ง protected group เข้าไปเลย ป้องกัน route ซ้ำ + บังคับ auth
 	router.SetupUserRoutes(protected, userHandler)
 
 	// =========================
@@ -121,7 +127,7 @@ func main() {
 	vehicleService := vehicle.NewVehicleService(vehicleRepo)
 	vehicleHandler := vehicle.NewVehicleHandler(vehicleService)
 
-	router.SetupVehicleRoutes(r, protected, vehicleHandler) //public
+	router.SetupVehicleRoutes(r, adminProtected, vehicleHandler)
 
 	// =========================
 	// CATEGORY MODULE
@@ -130,7 +136,7 @@ func main() {
 	categoryService := category.NewCategoryService(categoryRepo)
 	categoryHandler := category.NewCategoryHandler(categoryService)
 
-	router.SetupCategoryRoutes(r, protected, categoryHandler) //public
+	router.SetupCategoryRoutes(r, adminProtected, categoryHandler)
 
 	log.Println("Server running on http://localhost:8080")
 

@@ -9,6 +9,6 @@ import (
 func SetupPriceRoutes(r *gin.Engine, priceHandler *price.PriceHandler) {
 	api := r.Group("/products")
 
-	// compare price
+	// PUBLIC ONLY
 	api.GET("/:id/prices", priceHandler.GetPricesByProductID)
 }
