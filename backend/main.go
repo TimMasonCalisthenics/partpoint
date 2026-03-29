@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm"
 
 	"backend/internal/auth"
+	"backend/internal/favourite"
 	"backend/internal/middleware"
 	"backend/internal/price"
 	"backend/internal/product"
@@ -101,6 +102,12 @@ func main() {
 
 	// ส่ง protected group เข้าไปเลย ป้องกัน route ซ้ำ + บังคับ auth
 	router.SetupUserRoutes(protected, userHandler)
+
+	favRepo := favourite.NewFavouriteRepository(db)
+	favService := favourite.NewFavouriteService(favRepo)
+	favHandler := favourite.NewFavouriteHandler(favService)
+
+	router.SetupFavouriteRoutes(protected, favHandler)
 
 	log.Println("Server running on http://localhost:8080")
 
