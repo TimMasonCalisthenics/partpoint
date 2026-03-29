@@ -37,57 +37,57 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-// GET /api/favourites
-func (h *UserHandler) GetFavourites(c *gin.Context) {
-	userIDRaw, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
+// // GET /api/favourites
+// func (h *UserHandler) GetFavourites(c *gin.Context) {
+// 	userIDRaw, exists := c.Get("userID")
+// 	if !exists {
+// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+// 		return
+// 	}
 
-	userID, ok := userIDRaw.(int)
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid userID"})
-		return
-	}
+// 	userID, ok := userIDRaw.(int)
+// 	if !ok {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid userID"})
+// 		return
+// 	}
 
-	favs, err := h.service.GetUserFavourites(userID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+// 	favs, err := h.service.GetUserFavourites(userID)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	c.JSON(http.StatusOK, favs)
-}
+// 	c.JSON(http.StatusOK, favs)
+// }
 
-// POST /api/favourites
-func (h *UserHandler) AddFavourite(c *gin.Context) {
-	userIDRaw, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
+// // POST /api/favourites
+// func (h *UserHandler) AddFavourite(c *gin.Context) {
+// 	userIDRaw, exists := c.Get("userID")
+// 	if !exists {
+// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+// 		return
+// 	}
 
-	userID, ok := userIDRaw.(int)
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid userID"})
-		return
-	}
+// 	userID, ok := userIDRaw.(int)
+// 	if !ok {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid userID"})
+// 		return
+// 	}
 
-	var body struct {
-		ProductID int `json:"productId"`
-	}
+// 	var body struct {
+// 		ProductID int `json:"productId"`
+// 	}
 
-	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+// 	if err := c.ShouldBindJSON(&body); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	fav, err := h.service.AddFavourite(userID, body.ProductID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+// 	fav, err := h.service.AddFavourite(userID, body.ProductID)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	c.JSON(http.StatusCreated, fav)
-}
+// 	c.JSON(http.StatusCreated, fav)
+// }

@@ -93,7 +93,7 @@ func main() {
 	router.SetupStoreRoutes(r, storeHandler)
 
 	// =========================
-	// USER MODULE (PROFILE + FAVOURITES)
+	// USER PROFILE MODULE
 	// =========================
 	userRepo := user.NewUserRepository(db)
 	userService := user.NewUserService(userRepo)
