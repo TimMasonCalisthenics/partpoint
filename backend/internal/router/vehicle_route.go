@@ -6,13 +6,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupVehicleRoutes(rg *gin.RouterGroup, h *vehicle.VehicleHandler) {
-	v := rg.Group("/vehicles")
+func SetupVehicleRoutes(r *gin.Engine, protected *gin.RouterGroup, h *vehicle.VehicleHandler) {
+
+	// public
+	v := r.Group("/vehicles")
 	{
-		v.POST("", h.Create)
 		v.GET("", h.GetAll)
 		v.GET("/:id", h.GetByID)
-		v.PUT("/:id", h.Update)
-		v.DELETE("/:id", h.Delete)
+	}
+
+	// protected
+	vAuth := protected.Group("/vehicles")
+	{
+		vAuth.POST("", h.Create)
+		vAuth.PUT("/:id", h.Update)
+		vAuth.DELETE("/:id", h.Delete)
 	}
 }

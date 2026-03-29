@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm"
 
 	"backend/internal/auth"
+	"backend/internal/category"
 	"backend/internal/favourite"
 	"backend/internal/middleware"
 	"backend/internal/price"
@@ -120,8 +121,16 @@ func main() {
 	vehicleService := vehicle.NewVehicleService(vehicleRepo)
 	vehicleHandler := vehicle.NewVehicleHandler(vehicleService)
 
-	//ต้อง login ก่อน
-	router.SetupVehicleRoutes(protected, vehicleHandler)
+	router.SetupVehicleRoutes(r, protected, vehicleHandler) //public
+
+	// =========================
+	// CATEGORY MODULE
+	// =========================
+	categoryRepo := category.NewCategoryRepository(db)
+	categoryService := category.NewCategoryService(categoryRepo)
+	categoryHandler := category.NewCategoryHandler(categoryService)
+
+	router.SetupCategoryRoutes(r, protected, categoryHandler) //public
 
 	log.Println("Server running on http://localhost:8080")
 
