@@ -51,6 +51,17 @@ func main() {
 	r := gin.Default()
 
 	// =========================
+	// SETUP CORS
+	// =========================
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"}, // อนุญาตให้ Frontend ของเรายิงเข้ามาได้
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
+
+	// =========================
 	// AUTH MODULE
 	// =========================
 	authRepo := auth.NewUserRepository(db)
