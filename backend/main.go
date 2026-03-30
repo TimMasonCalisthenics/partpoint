@@ -1,46 +1,146 @@
 package main
 
 import (
-	"encoding/json"
+	"fmt"
 	"log"
-	"net/http"
+	"os"
 
-	"partpoint-backend/prisma/db" // เช็คชื่อ module ใน go.mod ให้ตรงกัน
-
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+
+	"backend/internal/auth"
+	"backend/internal/category"
+	"backend/internal/favourite"
+	"backend/internal/middleware"
+	"backend/internal/price"
+	"backend/internal/product"
+	"backend/internal/router"
+	"backend/internal/store"
+	"backend/internal/user"
+	"backend/internal/vehicle"
 )
 
 func main() {
-	// 1. โหลด .env
+	// โหลด .env
 	if err := godotenv.Load(); err != nil {
 		log.Println("Info: .env file not found")
 	}
 
-	// 2. เชื่อมต่อ Database
-	client := db.NewClient()
-	if err := client.Prisma.Connect(); err != nil {
-		log.Fatal(err)
+	// DB config
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbUser := os.Getenv("DB_USER")
+	dbPass := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		dbHost, dbUser, dbPass, dbName, dbPort,
+	)
+
+	// connect DB
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal("Failed to connect to database:", err)
 	}
-	defer func() {
-		if err := client.Prisma.Disconnect(); err != nil {
-			panic(err)
-		}
-	}()
 
-	log.Println("✅ Connected to Database!")
+	log.Println("Connected to Database!")
 
-	// 3. สร้าง Server และ API ง่ายๆ
-	http.HandleFunc("/api/test", func(w http.ResponseWriter, r *http.Request) {
-		// เปิด CORS ให้ Frontend (Port 5173) เข้าถึงได้
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-		w.Header().Set("Content-Type", "application/json")
+	r := gin.Default()
 
-		response := map[string]string{"message": "Hello from Go Backend!"}
-		json.NewEncoder(w).Encode(response)
-	})
+	// =========================
+	// AUTH MODULE
+	// =========================
+	authRepo := auth.NewUserRepository(db)
+	authService := auth.NewUserService(authRepo)
+	authHandler := auth.NewUserHandler(authService)
 
-	log.Println("🚀 Server running on http://localhost:8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	r.POST("/register", authHandler.Register)
+	r.POST("/login", authHandler.Login)
+
+	// =========================
+	// USER PROTECTED (login only)
+	// =========================
+	protected := r.Group("")
+	protected.Use(middleware.AuthMiddleware())
+
+	protected.POST("/logout", authHandler.Logout)
+
+	// =========================
+	// ADMIN PROTECTED (login + admin)
+	// =========================
+	adminProtected := r.Group("")
+	adminProtected.Use(middleware.AuthMiddleware())
+	adminProtected.Use(middleware.AdminMiddleware())
+
+	// =========================
+	// PRODUCT MODULE
+	// =========================
+	productRepo := product.NewProductRepository(db)
+	productService := product.NewProductService(productRepo)
+	productHandler := product.NewProductHandler(productService)
+
+	router.SetupProductRoutes(r, adminProtected, productHandler)
+
+	// =========================
+	// PRICE MODULE
+	// =========================
+	priceRepo := price.NewPriceRepository(db)
+	priceService := price.NewPriceService(priceRepo)
+	priceHandler := price.NewPriceHandler(priceService)
+
+	router.SetupPriceRoutes(r, priceHandler)
+
+	// =========================
+	// STORE MODULE
+	// =========================
+	storeRepo := store.NewStoreRepository(db)
+	storeService := store.NewStoreService(storeRepo)
+	storeHandler := store.NewStoreHandler(storeService)
+
+	router.SetupStoreRoutes(r, adminProtected, storeHandler)
+
+	// =========================
+	// USER PROFILE MODULE
+	// =========================
+	userRepo := user.NewUserRepository(db)
+	userService := user.NewUserService(userRepo)
+	userHandler := user.NewUserHandler(userService)
+
+	router.SetupUserRoutes(protected, userHandler)
+
+	// =========================
+	// FAVORITE MODULE
+	// =========================
+	favRepo := favourite.NewFavouriteRepository(db)
+	favService := favourite.NewFavouriteService(favRepo)
+	favHandler := favourite.NewFavouriteHandler(favService)
+
+	router.SetupFavouriteRoutes(protected, favHandler)
+
+	// =========================
+	// VEHICLE MODULE
+	// =========================
+	vehicleRepo := vehicle.NewVehicleRepository(db)
+	vehicleService := vehicle.NewVehicleService(vehicleRepo)
+	vehicleHandler := vehicle.NewVehicleHandler(vehicleService)
+
+	router.SetupVehicleRoutes(r, adminProtected, vehicleHandler)
+
+	// =========================
+	// CATEGORY MODULE
+	// =========================
+	categoryRepo := category.NewCategoryRepository(db)
+	categoryService := category.NewCategoryService(categoryRepo)
+	categoryHandler := category.NewCategoryHandler(categoryService)
+
+	router.SetupCategoryRoutes(r, adminProtected, categoryHandler)
+
+	log.Println("Server running on http://localhost:8080")
+
+	if err := r.Run(":8080"); err != nil {
 		log.Fatal(err)
 	}
 }
