@@ -37,6 +37,10 @@ export default function Footer() {
               <p>ข้อมูลสินค้าและรูปภาพที่ปรากฏในเว็บไซต์นี้เป็นกรรมสิทธิ์ของเจ้าของลิขสิทธิ์</p>
               <p>ทางคณะผู้จัดทำไม่มีวัตถุประสงค์เพื่อการค้าหรือละเมิดลิขสิทธิ์แต่อย่างใด</p>
             </div>
+            {/* Flaticon Attribution */}
+            <div className="text-sm text-gray-400 mt-4 leading-relaxed">
+              * Icons made by <a href="https://www.flaticon.com/authors/pictranoosa" title="pictranoosa" className="text-red-500 hover:text-red-400 underline">pictranoosa</a> and others from <a href="https://www.flaticon.com/" title="Flaticon" className="text-red-500 hover:text-red-400 underline">www.flaticon.com</a>
+            </div>
           </div>
         </div>
 
