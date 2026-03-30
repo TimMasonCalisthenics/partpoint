@@ -5,6 +5,7 @@ import ProductsPage from './pages/Products';
 import ComparePage from './pages/Compare';
 import BrandsPage from './pages/Brands';
 import AboutPage from './pages/About';
+import RegisterPage from './pages/Register';
 // import หน้าอื่นๆ เข้ามาตรงนี้...
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         {/* <Route path="/search" element={<SearchResultPage />} /> */}
         {/* <Route path="/product/:id" element={<ProductDetailPage />} /> */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/compare" element={<ComparePage />} />
         <Route path="/brands" element={<BrandsPage />} />
