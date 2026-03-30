@@ -1,67 +1,121 @@
+import { useRef, useState } from 'react';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
 import { Car, ChevronRight, ExternalLink, ChevronLeft } from 'lucide-react';
 
 // --- Mock Data ---
 const carBrands = [
-  { name: 'Mazda', bgImage: '/s63engine.jpg' },
-  { name: 'BMW', bgImage: '/s63engine.jpg' },
-  { name: 'Mercedes-Benz', bgImage: '/s63engine.jpg' },
-  { name: 'Nissan', bgImage: '/s63engine.jpg' },
-  { name: 'Mitsubishi', bgImage: '/s63engine.jpg' },
-  { name: 'Isuzu', bgImage: '/s63engine.jpg' }
+  { name: 'Mazda', bgImage: '/Brandpart/CarBand/mazda-2.svg' },
+  { name: 'BMW', bgImage: '/Brandpart/CarBand/bmw-svgrepo-com.svg' },
+  { name: 'Mercedes-Benz', bgImage: '/Brandpart/CarBand/Mercedes-Benz-Logo.wine.svg' },
+  { name: 'Nissan', bgImage: '/Brandpart/CarBand/nissan-6.svg' },
+  { name: 'Mitsubishi', bgImage: '/Brandpart/CarBand/mitsubishi.svg' },
+  { name: 'Isuzu', bgImage: '/Brandpart/CarBand/isuzu-2.svg' },
+  { name: 'Toyota', bgImage: '/Brandpart/CarBand/toyota-1.svg' },
+  { name: 'Honda', bgImage: '/Brandpart/CarBand/honda-11.svg' },
+  { name: 'Ford', bgImage: '/Brandpart/CarBand/ford-8.svg' },
 ];
 
 const tireBrands = [
-  { name: 'Michelin', bgImage: '/Example_product_pic/Product3.png', link: true },
-  { name: 'Goodyear', bgImage: '/Example_product_pic/Product3.png', link: true },
-  { name: 'Yokohama', bgImage: '/Example_product_pic/Product3.png', link: true },
-  { name: 'Dunlop', bgImage: '/Example_product_pic/Product3.png', link: true },
-  { name: 'Continental', bgImage: '/Example_product_pic/Product3.png', link: true },
+  { name: 'Michelin', bgImage: '/Brandpart/TireBand/Michelin_Logo_0.svg', link: true },
+  { name: 'Bridgestone', bgImage: '/Brandpart/TireBand/bridgestone-26989.svg', link: true },
+  { name: 'Goodyear', bgImage: '/Brandpart/TireBand/goodyear-tire-1.svg', link: true },
+  { name: 'Yokohama', bgImage: '/Brandpart/TireBand/yokohama-logo.svg', link: true },
+  { name: 'Dunlop', bgImage: '/Brandpart/TireBand/dunlop-tires-logo-svgrepo-com.svg', link: true },
+  { name: 'Continental', bgImage: '/Brandpart/TireBand/continental-54.svg', link: true },
+  { name: 'Pirelli', bgImage: '/Brandpart/TireBand/Pirelli_id89Ihp_Aw_1.svg', link: true },
+  { name: 'Toyo Tires', bgImage: '/Brandpart/TireBand/toyotires.svg', link: true },
+  { name: 'Hankook', bgImage: '/Brandpart/TireBand/hankook-tire-black.svg', link: true },
+  { name: 'Deestone', bgImage: '/Brandpart/TireBand/deestone-logo-png_seeklogo-518858 (1).svg', link: true },
 ];
 
 const wheelBrands = [
-  { name: 'Enkei', bgImage: '/Carpart/BG_Search_menu.png', link: true },
-  { name: 'BBS', bgImage: '/Carpart/BG_Search_menu.png', link: true },
-  { name: 'Volk Racing', bgImage: '/Carpart/BG_Search_menu.png', link: true },
-  { name: 'Rotiform', bgImage: '/Carpart/BG_Search_menu.png', link: true },
-  { name: 'Lenso', bgImage: '/Carpart/BG_Search_menu.png', link: true },
+  { name: 'Enkei', bgImage: '/Brandpart/MagwheelBrand/enkei.svg', link: true },
+  { name: 'BBS', bgImage: '/Brandpart/MagwheelBrand/bbs.svg', link: true },
+  { name: 'Volk Racing', bgImage: '/Brandpart/MagwheelBrand/Volk%20racing.svg', link: true },
+  { name: 'Rotiform', bgImage: '/Brandpart/MagwheelBrand/Rotiform_idY5oOnaHG_1.svg', link: true },
+  { name: 'Lenso', bgImage: '/Brandpart/MagwheelBrand/Lenso_Wheel_idN0DsoznJ_0.svg', link: true },
+  { name: 'WedsSport', bgImage: '/Brandpart/MagwheelBrand/Wedsport.png', link: true },
+  { name: 'SSR', bgImage: '/Brandpart/MagwheelBrand/ssr_logos.svg', link: true },
+  { name: 'OZ Racing', bgImage: '/Brandpart/MagwheelBrand/oz-racing.svg', link: true },
+  { name: 'HRE', bgImage: '/Brandpart/MagwheelBrand/HRE1.svg', link: true },
+  { name: 'Cosmis', bgImage: '/Brandpart/MagwheelBrand/Cosmis4.svg', link: true },
 ];
 
 const shockBrands = [
-  { name: 'YSS', bgImage: '/s63engine.jpg', link: true },
-  { name: 'Tein', bgImage: '/s63engine.jpg', link: true },
-  { name: 'Ohlins', bgImage: '/s63engine.jpg', link: true },
-  { name: 'Bilstein', bgImage: '/s63engine.jpg', link: true },
-  { name: 'Monroe', bgImage: '/s63engine.jpg', link: true },
+  { name: 'YSS', bgImage: '/Brandpart/shock_absorbers_Brand/yss-suspension-logo-png_seeklogo-328519.svg', link: true },
+  { name: 'Tein', bgImage: '/Brandpart/shock_absorbers_Brand/tein.svg', link: true },
+  { name: 'Ohlins', bgImage: '/Brandpart/shock_absorbers_Brand/Oehlins_logo.svg', link: true },
+  { name: 'Bilstein', bgImage: '/Brandpart/shock_absorbers_Brand/bilstein-46618.svg', link: true },
+  { name: 'Monroe', bgImage: '/Brandpart/shock_absorbers_Brand/monroe-premiumquality.svg', link: true },
+  { name: 'Profender', bgImage: '/Brandpart/shock_absorbers_Brand/Profender-White-min.png', link: true },
+  { name: 'Fox', bgImage: '/Brandpart/shock_absorbers_Brand/fox-racing-shox-1.svg', link: true },
+  { name: 'Koni', bgImage: '/Brandpart/shock_absorbers_Brand/Koni.png', link: true },
+  { name: 'KYB', bgImage: '/Brandpart/shock_absorbers_Brand/kyb-gas-shocks-1.svg', link: true },
 ];
 
 const batteryBrands = [
-  { name: 'GS Battery', bgImage: '/Carpart/BG_Search_menu.png', link: true },
-  { name: 'FB Battery', bgImage: '/Carpart/BG_Search_menu.png', link: true },
-  { name: 'Amaron', bgImage: '/Carpart/BG_Search_menu.png', link: true },
-  { name: 'Panasonic', bgImage: '/Carpart/BG_Search_menu.png', link: true },
-  { name: 'Puma', bgImage: '/Carpart/BG_Search_menu.png', link: true },
+  { name: 'GS Battery', bgImage: '/Brandpart/BatteryBrand/GS_Battery_id_DRPP114_1.svg', link: true },
+  { name: 'FB Battery', bgImage: '/Brandpart/BatteryBrand/furukawa-1.svg', link: true },
+  { name: 'Amaron', bgImage: '/Brandpart/BatteryBrand/Amaron_idKYXMc4Es_0.png', link: true },
+  { name: 'Panasonic', bgImage: '/Brandpart/BatteryBrand/panasonic-1.svg', link: true },
+  { name: 'Puma', bgImage: '/Brandpart/BatteryBrand/Puma_Energy_idvenUqrTx_1.svg', link: true },
+  { name: '3K Battery', bgImage: '/Brandpart/BatteryBrand/3K_Battery_Logo.svg.png', link: true },
+  { name: 'Yuasa', bgImage: '/Brandpart/BatteryBrand/yuasa-1.svg', link: true },
+  { name: 'Varta', bgImage: '/Brandpart/BatteryBrand/varta.svg', link: true },
+  { name: 'Bosch', bgImage: '/Brandpart/BatteryBrand/bosch.svg', link: true },
 ];
 
 const brakeBrands = [
-  { name: 'Brembo', bgImage: '/s63engine.jpg', link: true },
-  { name: 'Bendix', bgImage: '/s63engine.jpg', link: true },
-  { name: 'Compact Brakes', bgImage: '/s63engine.jpg', link: true },
-  { name: 'Akebono', bgImage: '/s63engine.jpg', link: true },
-  { name: 'Project Mu', bgImage: '/s63engine.jpg', link: true },
+  { name: 'Brembo', bgImage: '/Brandpart/BreakBrand/brembo-logo-2.svg', link: true },
+  { name: 'Bendix', bgImage: '/Brandpart/BreakBrand/bendix-2.svg', link: true },
+  { name: 'Compact Brakes', bgImage: '/Brandpart/BreakBrand/Compact.jpg', link: true },
+  { name: 'Akebono', bgImage: '/Brandpart/BreakBrand/akebono-brake-company.svg', link: true },
+  { name: 'Project Mu', bgImage: '/Brandpart/BreakBrand/Project%20Mu.png', link: true },
+  { name: 'Endless', bgImage: '/Brandpart/BreakBrand/endless-3.svg', link: true },
+  { name: 'AP Racing', bgImage: '/Brandpart/BreakBrand/ap-racing-ltd-logo-vector.svg', link: true },
+  { name: 'EBC', bgImage: '/Brandpart/BreakBrand/ebc-brakes.svg', link: true },
+  { name: 'TRW', bgImage: '/Brandpart/BreakBrand/trw.svg', link: true },
 ];
 
 const oilBrands = [
-  { name: 'Motul', bgImage: '/Carpart/BG_Search_menu.png', link: true },
-  { name: 'Mobil 1', bgImage: '/Carpart/BG_Search_menu.png', link: true },
-  { name: 'Castrol', bgImage: '/Carpart/BG_Search_menu.png', link: true },
-  { name: 'Liqui Moly', bgImage: '/Carpart/BG_Search_menu.png', link: true },
-  { name: 'Amsoil', bgImage: '/Carpart/BG_Search_menu.png', link: true },
+  { name: 'Motul', bgImage: '/Brandpart/EngineOilBrand/motul-logo-1.svg', link: true },
+  { name: 'Mobil 1', bgImage: '/Brandpart/EngineOilBrand/mobil-1.svg', link: true },
+  { name: 'Castrol', bgImage: '/Brandpart/EngineOilBrand/castrol-5.svg', link: true },
+  { name: 'Liqui Moly', bgImage: '/Brandpart/EngineOilBrand/liqui-moly-1.svg', link: true },
+  { name: 'Amsoil', bgImage: '/Brandpart/EngineOilBrand/amsoil-2.svg', link: true },
+  { name: 'PTT Lubricants', bgImage: '/Brandpart/EngineOilBrand/ptt-1.svg', link: true },
+  { name: 'Valvoline', bgImage: '/Brandpart/EngineOilBrand/valvoline-7.svg', link: true },
+  { name: 'Shell Helix', bgImage: '/Brandpart/EngineOilBrand/shell-helix-1.svg', link: true },
+  { name: 'HKS', bgImage: '/Brandpart/EngineOilBrand/hks-1.svg', link: true },
 ];
 
 // --- Component ---
 const BrandCategoryRow = ({ title, icon: Icon, iconImg, brands }: any) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const scrollAmount = window.innerWidth < 768 ? 240 : 400; // Scroll distance depending on mobile/desktop
+      scrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (maxScroll <= 0) return;
+    
+    // เราสร้างจุดล่างแค่ 3 จุด (หน้าแรก, ตรงกลาง, ท้ายสุด)
+    const scrolledPercentage = el.scrollLeft / maxScroll;
+    const currentDotIndex = Math.round(scrolledPercentage * 2); 
+    setActiveIndex(currentDotIndex);
+  };
+
   return (
     <div className="mb-14">
       {/* Header */}
@@ -87,17 +141,26 @@ const BrandCategoryRow = ({ title, icon: Icon, iconImg, brands }: any) => {
       {/* Carousel Container */}
       <div className="relative group">
         
-        {/* Navigation Arrows (Mock logic for visual) */}
-        <button className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-black border border-gray-700 hover:bg-black hover:border-red-600 hover:text-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all z-10 hidden lg:block">
-            <ChevronLeft className="w-5 h-5" />
+        {/* Navigation Arrows */}
+        <button 
+            onClick={() => scroll('left')}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-black border border-gray-700 hover:bg-black hover:border-red-600 hover:text-red-500 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all z-10 hidden lg:block shadow-lg"
+        >
+            <ChevronLeft className="w-6 h-6" />
         </button>
-        <button className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-black border border-gray-700 hover:bg-black hover:border-red-600 hover:text-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all z-10 hidden lg:block">
-            <ChevronRight className="w-5 h-5" />
+        <button 
+            onClick={() => scroll('right')}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-black border border-gray-700 hover:bg-black hover:border-red-600 hover:text-red-500 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all z-10 hidden lg:block shadow-lg"
+        >
+            <ChevronRight className="w-6 h-6" />
         </button>
 
         {/* Carousel Items */}
-        {/* We use px-4 md:px-0 to give some padding on mobile but align with container on desktop */}
-        <div className="flex gap-4 overflow-x-auto pb-4 snap-x px-4 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+        <div 
+          ref={scrollRef} 
+          onScroll={handleScroll}
+          className="flex gap-4 overflow-x-auto pb-4 snap-x px-4 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+        >
           {brands.map((brand: any, idx: number) => (
             <div 
                 key={idx} 
@@ -107,7 +170,7 @@ const BrandCategoryRow = ({ title, icon: Icon, iconImg, brands }: any) => {
               <img 
                 src={brand.bgImage} 
                 alt={brand.name} 
-                className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover/card:opacity-80 transition-opacity mix-blend-screen grayscale group-hover/card:grayscale-0" 
+                className={`absolute inset-0 w-full h-full opacity-50 group-hover/card:opacity-100 transition-opacity mix-blend-screen grayscale group-hover/card:grayscale-0 ${brand.bgImage.endsWith('.svg') || brand.bgImage.includes('logo') || brand.bgImage.includes('Brandpart') ? 'object-contain p-4' : 'object-cover'}`} 
               />
               
               {/* Gradient overlay */}
@@ -126,11 +189,14 @@ const BrandCategoryRow = ({ title, icon: Icon, iconImg, brands }: any) => {
           ))}
         </div>
         
-        {/* Pagination Dots (Mock) */}
+        {/* Pagination Dots */}
         <div className="flex justify-center gap-2 mt-2">
-            <div className="w-2 h-2 bg-red-600 rounded-full"></div>
-            <div className="w-2 h-2 bg-gray-700 rounded-full"></div>
-            <div className="w-2 h-2 bg-gray-700 rounded-full"></div>
+            {[0, 1, 2].map((dotIndex) => (
+               <div 
+                  key={dotIndex} 
+                  className={`h-2 rounded-full transition-all duration-300 ${activeIndex === dotIndex ? 'bg-red-600 w-6' : 'bg-gray-700 w-2'}`}
+               ></div>
+            ))}
         </div>
         
       </div>
