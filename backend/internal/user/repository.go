@@ -6,8 +6,9 @@ import (
 
 type UserRepository interface {
 	GetByID(id int) (User, error)
-	// GetFavourites(userID int) ([]Favourite, error)
-	// AddFavourite(fav Favourite) (Favourite, error)
+	FindAll() ([]User, error)
+	Update(id int, data map[string]interface{}) error
+	Delete(id int) error
 }
 
 type userRepository struct {
@@ -22,6 +23,20 @@ func (r *userRepository) GetByID(id int) (User, error) {
 	var u User
 	err := r.db.First(&u, id).Error
 	return u, err
+}
+
+func (r *userRepository) FindAll() ([]User, error) {
+	var users []User
+	err := r.db.Find(&users).Error
+	return users, err
+}
+
+func (r *userRepository) Update(id int, data map[string]interface{}) error {
+	return r.db.Model(&User{}).Where("id = ?", id).Updates(data).Error
+}
+
+func (r *userRepository) Delete(id int) error {
+	return r.db.Delete(&User{}, id).Error
 }
 
 // func (r *userRepository) GetFavourites(userID int) ([]Favourite, error) {

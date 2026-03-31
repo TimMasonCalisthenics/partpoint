@@ -13,6 +13,7 @@ type User struct {
 	Email     string    `json:"email" gorm:"column:email"`
 	Password  string    `json:"-" gorm:"column:password"` // ไม่ส่ง password กลับ
 	Role      string    `json:"role" gorm:"column:role"`
+	IsEnabled bool      `json:"isEnabled" gorm:"column:isEnabled;default:true"`
 	CreatedAt time.Time `json:"createdAt" gorm:"column:createdAt"`
 }
 

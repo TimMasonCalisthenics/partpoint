@@ -136,6 +136,8 @@ export default function AdminProducts() {
   const [products, setProducts] = useState<any[]>(mockProducts);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedBrand, setSelectedBrand] = useState('all');
 
   useEffect(() => {
     fetchProducts();
@@ -418,11 +420,20 @@ export default function AdminProducts() {
     return `${specs.length} ข้อ`;
   };
 
-  const filteredProducts = products.filter(p => 
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    p.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.sku.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Get unique brands from current product list
+  const uniqueBrands = Array.from(new Set(products.map(p => p.brand))).filter(Boolean);
+  const categoriesList = Object.keys(categoryMap);
+
+  const filteredProducts = products.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         p.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         p.sku.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
+    const matchesBrand = selectedBrand === 'all' || p.brand === selectedBrand;
+
+    return matchesSearch && matchesCategory && matchesBrand;
+  });
 
   return (
     <AdminLayout>
@@ -443,16 +454,60 @@ export default function AdminProducts() {
         </div>
 
         {/* Toolbar */}
-        <div className="bg-[#121212] p-4 rounded-t-2xl border border-gray-800 flex justify-between items-center">
-          <div className="relative w-full max-w-sm">
-            <input 
-              type="text" 
-              placeholder="ค้นหา ชื่อสินค้า, แบรนด์, หรือรหัส SKU..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#1a1a1a] border border-gray-700 text-white pl-11 pr-4 py-2.5 rounded-xl focus:outline-none focus:border-red-500 transition-colors placeholder-gray-500 font-medium"
-            />
-            <Search className="w-5 h-5 text-gray-500 absolute left-4 top-1/2 -translate-y-1/2" />
+        <div className="bg-[#121212] p-4 rounded-t-2xl border border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex flex-1 flex-col md:flex-row items-center gap-3 w-full">
+            <div className="relative w-full max-w-sm">
+              <input 
+                type="text" 
+                placeholder="ค้นหา ชื่อสินค้า, แบรนด์, หรือรหัส..." 
+                className="w-full bg-[#1a1a1a] border border-gray-700 text-white rounded-xl pl-11 pr-4 py-2.5 focus:outline-none focus:border-red-600 transition-colors text-sm"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
+            </div>
+
+            {/* Category Filter */}
+            <select 
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="bg-[#1a1a1a] border border-gray-700 text-white rounded-xl px-4 py-2.5 focus:outline-none focus:border-red-600 transition-colors text-sm w-full md:w-auto min-w-[140px] font-medium"
+            >
+              <option value="all">ทุกหมวดหมู่</option>
+              {categoriesList.map(cat => (
+                <option key={cat} value={cat}>{cat.toUpperCase()}</option>
+              ))}
+            </select>
+
+            {/* Brand Filter */}
+            <select 
+              value={selectedBrand}
+              onChange={(e) => setSelectedBrand(e.target.value)}
+              className="bg-[#1a1a1a] border border-gray-700 text-white rounded-xl px-4 py-2.5 focus:outline-none focus:border-red-600 transition-colors text-sm w-full md:w-auto min-w-[140px] font-medium"
+            >
+              <option value="all">ทุกแบรนด์</option>
+              {uniqueBrands.map(brand => (
+                <option key={brand} value={brand}>{brand}</option>
+              ))}
+            </select>
+
+            {/* Reset Filters */}
+            {(selectedCategory !== 'all' || selectedBrand !== 'all' || searchQuery !== '') && (
+              <button 
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedCategory('all');
+                  setSelectedBrand('all');
+                }}
+                className="text-gray-500 hover:text-red-500 text-xs font-bold transition-colors underline decoration-dotted"
+              >
+                ล้างตัวกรอง
+              </button>
+            )}
+          </div>
+
+          <div className="text-gray-500 text-xs font-bold uppercase tracking-widest hidden lg:block">
+            แสดง {filteredProducts.length} รายการ
           </div>
         </div>
 
@@ -490,7 +545,7 @@ export default function AdminProducts() {
                      <p className="text-white font-bold break-words whitespace-normal min-w-[180px]">{product.name}</p>
                      {product.tags && product.tags.length > 0 && (
                         <div className="flex gap-1 mt-1.5 flex-wrap w-48">
-                          {product.tags.map((t, idx) => (
+                          {product.tags.map((t: string, idx: number) => (
                             <span key={idx} className="bg-red-600/10 text-red-500 text-[9px] font-bold px-1.5 py-0.5 rounded border border-red-500/20">{t}</span>
                           ))}
                         </div>

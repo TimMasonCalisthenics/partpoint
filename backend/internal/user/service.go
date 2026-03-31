@@ -2,8 +2,9 @@ package user
 
 type UserService interface {
 	GetProfile(userID int) (User, error)
-	// GetUserFavourites(userID int) ([]Favourite, error)
-	// AddFavourite(userID int, productID int) (Favourite, error)
+	ListAll() ([]User, error)
+	UpdateUser(id int, data map[string]interface{}) error
+	DeleteUser(id int) error
 }
 
 type userService struct {
@@ -16,6 +17,18 @@ func NewUserService(r UserRepository) UserService {
 
 func (s *userService) GetProfile(userID int) (User, error) {
 	return s.repo.GetByID(userID)
+}
+
+func (s *userService) ListAll() ([]User, error) {
+	return s.repo.FindAll()
+}
+
+func (s *userService) UpdateUser(id int, data map[string]interface{}) error {
+	return s.repo.Update(id, data)
+}
+
+func (s *userService) DeleteUser(id int) error {
+	return s.repo.Delete(id)
 }
 
 // func (s *userService) GetUserFavourites(userID int) ([]Favourite, error) {

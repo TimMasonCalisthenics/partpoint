@@ -3,6 +3,7 @@ import {ArrowLeft, ArrowRight} from 'lucide-react';
 import ProductCard from '../components/productcard';
 import Footer from '../components/footer';
 import {useState} from 'react';
+import { Link } from 'react-router-dom';
 
 export default function HomePage() {
 
@@ -89,9 +90,9 @@ export default function HomePage() {
 
         {/* ปุ่ม "ดูอะไหล่ทั้งหมด" (จัดให้อยู่ขวาล่าง) */}
         <div className="relative z-10 container mx-auto px-6 md:px-12 pb-12 flex justify-end">
-            <button className="bg-red-600 hover:bg-red-700 text-white font-bold text-xl py-3 px-8 rounded-full shadow-[0_0_20px_rgba(220,38,38,0.4)] transition transform hover:scale-105">
+            <Link to="/products" className="bg-red-600 hover:bg-red-700 text-white font-bold text-xl py-3 px-8 rounded-full shadow-[0_0_20px_rgba(220,38,38,0.4)] transition transform hover:scale-105">
                 ดูอะไหล่ทั้งหมด
-            </button>
+            </Link>
         </div>
 
         {/* ================= ส่วนแถบแบรนด์ (Brand Carousel) ================= */}

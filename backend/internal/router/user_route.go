@@ -8,6 +8,10 @@ import (
 
 func SetupUserRoutes(r *gin.RouterGroup, handler *user.UserHandler) {
 	r.GET("/profile", handler.GetProfile)
-	// r.GET("/favourites", handler.GetFavourites)
-	// r.POST("/favourites", handler.AddFavourite)
+}
+
+func SetupUserAdminRoutes(r *gin.RouterGroup, handler *user.UserHandler) {
+	r.GET("/users", handler.ListUsers)
+	r.PUT("/users/:id/role", handler.UpdateRole)
+	r.PUT("/users/:id/status", handler.UpdateStatus)
 }

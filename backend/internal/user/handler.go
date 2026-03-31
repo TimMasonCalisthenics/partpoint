@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -35,6 +36,60 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, user)
+}
+
+// GET /admin/users
+func (h *UserHandler) ListUsers(c *gin.Context) {
+	users, err := h.service.ListAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, users)
+}
+
+// PUT /admin/users/:id/role
+func (h *UserHandler) UpdateRole(c *gin.Context) {
+	idStr := c.Param("id")
+	var body struct {
+		Role string `json:"role"`
+	}
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var id int
+	fmt.Sscanf(idStr, "%d", &id)
+
+	err := h.service.UpdateUser(id, map[string]interface{}{"role": body.Role})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "role updated"})
+}
+
+// PUT /admin/users/:id/status
+func (h *UserHandler) UpdateStatus(c *gin.Context) {
+	idStr := c.Param("id")
+	var body struct {
+		IsEnabled bool `json:"isEnabled"`
+	}
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var id int
+	fmt.Sscanf(idStr, "%d", &id)
+
+	err := h.service.UpdateUser(id, map[string]interface{}{"isEnabled": body.IsEnabled})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "status updated"})
 }
 
 // // GET /api/favourites

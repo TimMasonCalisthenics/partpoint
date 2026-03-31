@@ -13,6 +13,7 @@ import (
 
 	"backend/internal/auth"
 	"backend/internal/category"
+	"backend/internal/dashboard"
 	"backend/internal/favourite"
 	"backend/internal/middleware"
 	"backend/internal/price"
@@ -54,6 +55,7 @@ func main() {
 	err = db.AutoMigrate(
 		&product.PartProduct{},
 		&auth.User{},
+		&favourite.Favourite{},
 	)
 	if err != nil {
 		log.Println("Warning: Failed to auto-migrate PartProduct schema:", err)
@@ -113,6 +115,12 @@ func main() {
 	adminProtected.Use(middleware.AdminMiddleware())
 
 	// =========================
+	// DASHBOARD MODULE
+	// =========================
+	dashHandler := dashboard.NewDashboardHandler(db)
+	router.SetupDashboardRoutes(adminProtected, dashHandler)
+
+	// =========================
 	// PRODUCT MODULE
 	// =========================
 	productRepo := product.NewProductRepository(db)
@@ -147,6 +155,7 @@ func main() {
 	userHandler := user.NewUserHandler(userService)
 
 	router.SetupUserRoutes(protected, userHandler)
+	router.SetupUserAdminRoutes(adminProtected, userHandler)
 
 	// =========================
 	// FAVORITE MODULE

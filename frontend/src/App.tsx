@@ -8,6 +8,8 @@ import BrandsPage from './pages/Brands';
 import AboutPage from './pages/About';
 import ProductDetailsPage from './pages/ProductDetails';
 import AdminProductsPage from './pages/admin/AdminProducts';
+import AdminDashboardPage from './pages/admin/Dashboard';
+import AdminUserManagementPage from './pages/admin/UserManagement';
 import { AuthProvider } from './context/AuthContext';
 import { CompareProvider } from './context/CompareContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -28,9 +30,19 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             
             {/* Admin Routes */}
+            <Route path="/admin/dashboard" element={
+               <ProtectedRoute adminOnly={true}>
+                   <AdminDashboardPage />
+               </ProtectedRoute>
+            } />
             <Route path="/admin/products" element={
                <ProtectedRoute adminOnly={true}>
                    <AdminProductsPage />
+               </ProtectedRoute>
+            } />
+            <Route path="/admin/users" element={
+               <ProtectedRoute adminOnly={true}>
+                   <AdminUserManagementPage />
                </ProtectedRoute>
             } />
           </Routes>
