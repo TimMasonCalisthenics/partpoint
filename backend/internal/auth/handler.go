@@ -51,6 +51,23 @@ func (h *UserHandler) Register(c *gin.Context) {
 	c.JSON(http.StatusOK, newUser)
 }
 
+// VERIFY OTP
+func (h *UserHandler) VerifyOTP(c *gin.Context) {
+	var req VerifyRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := h.service.VerifyOTP(req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "verification success"})
+}
+
 // LOGIN - สร้าง JWT และส่ง cookie
 func (h *UserHandler) Login(c *gin.Context) {
 	var req LoginRequest

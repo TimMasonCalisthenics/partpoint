@@ -1,7 +1,58 @@
-import { User, Lock, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { User, Lock, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!identifier || !password) {
+      setErrorMsg('กรุณากรอกข้อมูลให้ครบถ้วน');
+      return;
+    }
+    
+    setErrorMsg('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('http://localhost:8080/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ identifier, password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        login(data.user);
+        // เช็คว่าถ้าเป็นแอดมิน ให้ไปหน้าแอดมิน ถ้าเป็น user ให้ไปหน้าแรก
+        if (data.user?.role === 'admin') {
+          navigate('/admin/products');
+        } else {
+          navigate('/');
+        }
+      } else {
+        setErrorMsg(data.error || 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง');
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     // เปลี่ยนจาก justify-end pb-12 เป็น justify-center หรือเพิ่ม margin top เพื่อดันขึ้น
     // ปรับ background อิงจากรูปตัวอย่าง
@@ -43,7 +94,14 @@ export default function LoginPage() {
         {/* Login Box (Glassmorphism effect) */}
         <div className="bg-[#111111]/80 backdrop-blur-md border border-gray-800 rounded-3xl w-full p-8 shadow-2xl">
           
-          <form className="space-y-5">
+          {errorMsg && (
+            <div className="mb-4 bg-red-900/30 border border-red-500/50 text-red-400 px-4 py-3 rounded-xl flex items-center gap-2 text-sm font-medium animate-in fade-in slide-in-from-top-2">
+              <AlertCircle className="w-5 h-5 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          <form className="space-y-5" onSubmit={handleLogin}>
             {/* Username Input */}
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -51,8 +109,11 @@ export default function LoginPage() {
               </div>
               <input 
                 type="text" 
-                placeholder="ชื่อผู้ใช้งาน" 
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                placeholder="ชื่อผู้ใช้งาน หรือ อีเมล" 
                 className="w-full bg-[#0a0a0a] border border-gray-800 focus:border-red-600 text-white rounded-xl py-3.5 pl-12 pr-4 outline-none transition-colors placeholder:text-gray-600 font-medium"
+                required
               />
             </div>
 
@@ -63,18 +124,28 @@ export default function LoginPage() {
               </div>
               <input 
                 type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="รหัสผ่าน" 
                 className="w-full bg-[#0a0a0a] border border-gray-800 focus:border-red-600 text-white rounded-xl py-3.5 pl-12 pr-4 outline-none transition-colors placeholder:text-gray-600 font-medium"
+                required
               />
             </div>
 
             {/* Login Button */}
             <button 
-              type="button" // เปลี่ยนเป็น 'submit' เมื่อเชื่อม Backend
-              className="w-full bg-[#db2b2b] hover:bg-red-500 text-white font-bold rounded-xl py-4 mt-4 transition-all flex items-center justify-center gap-2 group shadow-[0_4px_14px_0_rgba(219,43,43,0.39)] hover:shadow-[0_6px_20px_rgba(219,43,43,0.23)] hover:-translate-y-0.5"
+              type="submit" 
+              disabled={loading}
+              className="w-full bg-[#db2b2b] hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl py-4 mt-4 transition-all flex items-center justify-center gap-2 group shadow-[0_4px_14px_0_rgba(219,43,43,0.39)] hover:shadow-[0_6px_20px_rgba(219,43,43,0.23)] hover:-translate-y-0.5"
             >
-              เข้าสู่ระบบ 
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  เข้าสู่ระบบ 
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
             </button>
           </form>
 

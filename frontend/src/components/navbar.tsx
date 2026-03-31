@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 // เรียกใช้ไอคอนจาก lucide-react (ที่เพิ่งลงไป)
 import { Search, User } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
+  const { user, logout } = useAuth();
   // สร้างรายการเมนูไว้เพื่อวนลูปสร้างตัวคั่น (Divider) ง่ายๆ
   const navLinks = [
     { name: 'หน้าหลัก', path: '/' },
@@ -44,12 +46,37 @@ export default function Navbar() {
               <Search className="text-red-600 w-5 h-5 group-focus-within:scale-110 transition" />
             </div>
 
-            {/* ปุ่มลงชื่อเข้าใช้ */}
-            <Link to="/login" className="flex items-center gap-2 group">
-              <span className="text-red-600 font-bold text-base group-hover:text-white transition">ลงชื่อเข้าใช้</span>
-              {/* ไอคอนคนสีแดง */}
-              <User className="text-red-600 w-7 h-7 group-hover:text-white transition transform group-hover:scale-110" />
-            </Link>
+            {/* ข้อมูลผู้ใช้ หรือ ปุ่มลงชื่อเข้าใช้ */}
+            {user ? (
+              <div className="flex items-center gap-4">
+                
+                {/* ชื่อผู้ใช้ */}
+                <div className="flex items-center gap-2 text-gray-300">
+                  <User className="text-red-500 w-6 h-6" />
+                  <span className="font-bold text-sm hidden md:block">{user.username}</span>
+                </div>
+
+                {/* ปุ่มไปหน้าแอดมิน (ถ้าเป็น Admin) */}
+                {user.role === 'admin' && (
+                  <Link to="/admin/products" className="text-xs bg-red-600/20 text-red-500 border border-red-500/30 px-2 py-1 rounded hover:bg-red-600 hover:text-white transition">
+                    ระบบหลังบ้าน
+                  </Link>
+                )}
+
+                {/* ปุ่มออกจากระบบ */}
+                <button 
+                  onClick={logout}
+                  className="text-xs font-bold text-gray-400 hover:text-red-500 transition underline underline-offset-4"
+                >
+                  ออกจากระบบ
+                </button>
+              </div>
+            ) : (
+              <Link to="/login" className="flex items-center gap-2 group pr-2">
+                <span className="text-red-600 font-bold text-base group-hover:text-white transition">ลงชื่อเข้าใช้</span>
+                <User className="text-red-600 w-7 h-7 group-hover:text-white transition transform group-hover:scale-110" />
+              </Link>
+            )}
           </div>
 
           {/* --- แถวล่าง: เมนูนำทาง (มีเส้นคั่น) --- */}

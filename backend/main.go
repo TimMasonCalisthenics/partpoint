@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -18,6 +19,7 @@ import (
 	"backend/internal/product"
 	"backend/internal/router"
 	"backend/internal/store"
+	"backend/internal/upload"
 	"backend/internal/user"
 	"backend/internal/vehicle"
 )
@@ -48,6 +50,29 @@ func main() {
 
 	log.Println("Connected to Database!")
 
+	// Auto-migrate our updated models
+	err = db.AutoMigrate(
+		&product.PartProduct{},
+		&auth.User{},
+	)
+	if err != nil {
+		log.Println("Warning: Failed to auto-migrate PartProduct schema:", err)
+	}
+
+	// สร้างบัญชี Admin เริ่มต้น (ถ้ายังไม่มี)
+	var adminCount int64
+	db.Model(&auth.User{}).Where("role = ?", "admin").Count(&adminCount)
+	if adminCount == 0 {
+		db.Create(&auth.User{
+			Username:   "PARTPOINT ADMIN",
+			Email:      "admin@partpoint.com",
+			Password:   "admin1234",
+			Role:       "admin",
+			IsVerified: true,
+		})
+		log.Println("⭐ Created default Admin account: admin@partpoint.com / admin1234")
+	}
+
 	r := gin.Default()
 
 	// =========================
@@ -69,6 +94,7 @@ func main() {
 	authHandler := auth.NewUserHandler(authService)
 
 	r.POST("/register", authHandler.Register)
+	r.POST("/verify-otp", authHandler.VerifyOTP)
 	r.POST("/login", authHandler.Login)
 
 	// =========================
@@ -148,6 +174,19 @@ func main() {
 	categoryHandler := category.NewCategoryHandler(categoryService)
 
 	router.SetupCategoryRoutes(r, adminProtected, categoryHandler)
+
+	// =========================
+	// UPLOAD MODULE (รูปสินค้า)
+	// =========================
+	uploadDir := "./uploads"
+	uploadHandler := upload.NewUploadHandler(uploadDir)
+
+	// Serve uploaded files as static
+	r.Static("/uploads", uploadDir)
+
+	// Upload endpoints (admin only)
+	adminProtected.POST("/upload", uploadHandler.UploadImage)
+	adminProtected.POST("/upload/multiple", uploadHandler.UploadMultipleImages)
 
 	log.Println("Server running on http://localhost:8080")
 

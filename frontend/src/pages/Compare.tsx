@@ -2,78 +2,36 @@ import Navbar from '../components/navbar';
 import Footer from '../components/footer';
 import { Trash2, AlertCircle, X, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
-
-// ข้อมูลจำลองสำหรับแสดงผลการเปรียบเทียบ 3 ตัว
-const initialCompareItems = [
-  {
-    id: 1,
-    tag: 'คะแนนเด่น',
-    name: 'ไส้กรองน้ำมันเครื่อง Bosch',
-    brand: 'Bosch',
-    desc: 'ไส้กรองน้ำมันคุณภาพสูง กรองได้ละเอียด',
-    price: '฿350',
-    linkText: 'ไปที่ Bosch Auto Service',
-    imageUrl: '/Example_product_pic/Product1.png', 
-    specs: {
-      carModel: 'Mazda 3 2019-2023',
-      type: 'Spin-on',
-      lifespan: '10,000 กม.',
-      warranty: '6 เดือน',
-      kind: '-',
-      material: '-'
-    }
-  },
-  {
-    id: 2,
-    tag: 'ยอดนิยม',
-    name: 'ไส้กรองอากาศ K&N',
-    brand: 'K&N',
-    desc: 'ไส้กรองอากาศล้างได้ ใช้ซ้ำได้ เพิ่มสมรรถนะเครื่องยนต์',
-    price: '฿1,800',
-    linkText: 'ไปที่ K&N Thailand Official',
-    imageUrl: '/Example_product_pic/product2.1.png',
-    specs: {
-      carModel: 'Honda Civic 2016-2023',
-      type: '-',
-      lifespan: '160,000 กม.',
-      warranty: '10 ปี',
-      kind: 'Cotton Gauze',
-      material: '-'
-    }
-  },
-  {
-    id: 3,
-    tag: 'ลดราคา',
-    name: 'ผ้าเบรกหน้า Premium',
-    brand: 'Brembo',
-    desc: 'ผ้าเบรกคุณภาพสูง ทนทาน ลดเสียงดังขณะเบรก',
-    price: '฿2,500',
-    linkText: 'ไปที่ AutoParts Thailand',
-    imageUrl: '/Example_product_pic/Product3.png',
-    specs: {
-      carModel: 'Toyota Camry 2018-2023',
-      type: '-',
-      lifespan: '50,000 กม.',
-      warranty: '1 ปี',
-      kind: '-',
-      material: 'Ceramic'
-    }
-  }
-];
+import { useCompare } from '../context/CompareContext';
 
 export default function ComparePage() {
-  const [items, setItems] = useState(initialCompareItems);
+  const { compareItems, removeFromCompare, clearCompare } = useCompare();
 
-  // ฟังก์ชันลบสินค้า 1 ชิ้น
-  const removeItem = (id: number) => {
-    setItems(items.filter(item => item.id !== id));
+  // Helper to parse specs string to array of {key, value}
+  const parseSpecs = (str: string) => {
+    try {
+      const parsed = JSON.parse(str || '[]');
+      if (Array.isArray(parsed)) {
+        // [{key, value}, ...]
+        return parsed.filter((item: any) => item.key || item.label).map((item: any) => ({
+          key: item.key || item.label,
+          value: item.value
+        }));
+      }
+      if (typeof parsed === 'object' && parsed !== null) {
+        // {"label": "value", ...}
+        return Object.entries(parsed).map(([k, v]) => ({ key: k, value: String(v) }));
+      }
+      return [];
+    } catch {
+      return [];
+    }
   };
 
-  // ฟังก์ชันล้างทั้งหมด
-  const clearAll = () => {
-    setItems([]);
-  };
+  // Get all unique specification keys across all products
+  const allSpecKeys = Array.from(new Set(
+    compareItems.flatMap(item => parseSpecs(item.specifications).map(s => s.key))
+  )).filter(k => k && k.trim() !== '');
 
   return (
     <div className="min-h-screen flex flex-col bg-[#050505] overflow-hidden font-sans text-white">
@@ -85,11 +43,11 @@ export default function ComparePage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <div>
             <h1 className="text-3xl md:text-4xl font-extrabold mb-2 text-white">เปรียบเทียบสินค้า</h1>
-            <p className="text-gray-400 text-sm">กำลังเปรียบเทียบ {items.length} รายการ (สูงสุด 3 รายการ)</p>
+            <p className="text-gray-400 text-sm">กำลังเปรียบเทียบ {compareItems.length} รายการ (สูงสุด 3 รายการ)</p>
           </div>
-          {items.length > 0 && (
+          {compareItems.length > 0 && (
             <button 
-              onClick={clearAll}
+              onClick={clearCompare}
               className="flex items-center gap-2 border border-red-900 text-red-500 hover:bg-red-950 px-4 py-2 rounded-md transition-colors text-sm font-semibold"
             >
               <Trash2 className="w-4 h-4" />
@@ -98,7 +56,7 @@ export default function ComparePage() {
           )}
         </div>
 
-        {items.length > 0 ? (
+        {compareItems.length > 0 ? (
           <>
             {/* Alert Banner */}
             <div className="bg-[#1a0f0f] border border-red-900/50 rounded-lg p-3 flex items-center gap-3 mb-8">
@@ -108,21 +66,20 @@ export default function ComparePage() {
 
             {/* Products Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              {items.map((item) => (
+              {compareItems.map((item) => (
                 <div key={item.id} className="bg-[#121212] border border-gray-800 rounded-lg overflow-hidden flex flex-col relative">
                   
                   {/* Product Image */}
                   <div className="bg-white h-56 flex items-center justify-center relative p-4 group">
-                    <img src={item.imageUrl} alt={item.name} className="max-h-full max-w-full object-contain mix-blend-multiply" />
+                    {item.imageURL ? (
+                      <img src={item.imageURL} alt={item.name} className="max-h-full max-w-full object-contain" />
+                    ) : (
+                      <div className="text-gray-400 text-sm">ไม่มีภาพสินค้า</div>
+                    )}
                     
-                    {/* Tag */}
-                    <div className="absolute top-0 left-0 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-br-lg">
-                      {item.tag}
-                    </div>
-
                     {/* Remove individual item button */}
                     <button 
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => removeFromCompare(item.id)}
                       className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white p-1 rounded-sm shadow-md transition-colors opacity-0 group-hover:opacity-100 md:opacity-100"
                     >
                       <X className="w-4 h-4" />
@@ -131,15 +88,24 @@ export default function ComparePage() {
 
                   {/* Product Details */}
                   <div className="p-5 flex flex-col flex-grow">
-                    <h3 className="text-lg font-bold text-white mb-1 line-clamp-1">{item.name}</h3>
+                    <h3 className="text-lg font-bold text-white mb-1 line-clamp-1 h-7">{item.name}</h3>
                     <p className="text-gray-500 text-xs mb-3">{item.brand}</p>
-                    <p className="text-gray-400 text-xs mb-4 line-clamp-2 h-8">{item.desc}</p>
-                    <div className="text-red-500 text-2xl font-black mb-4">{item.price}</div>
+                    <p className="text-gray-400 text-xs mb-4 line-clamp-2 h-8">{item.description}</p>
+                    <div className="text-red-500 text-2xl font-black mb-4 h-8">
+                       {(item.promoPrice > 0 ? item.promoPrice : item.basePrice).toLocaleString()} ฿
+                    </div>
                     
-                    <button className="w-full flex justify-center items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors text-sm font-bold mt-auto">
-                        <ExternalLink className="w-4 h-4" />
-                        {item.linkText}
-                    </button>
+                    {item.affiliateLink && (
+                      <a 
+                        href={item.affiliateLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full flex justify-center items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors text-sm font-bold mt-auto"
+                      >
+                          <ExternalLink className="w-4 h-4" />
+                          สั่งซื้อสินค้า
+                      </a>
+                    )}
                   </div>
                 </div>
               ))}
@@ -147,51 +113,40 @@ export default function ComparePage() {
 
             {/* Comparison Table Section */}
             <div className="bg-[#121212] border border-gray-800 rounded-lg p-6 mb-12 overflow-hidden">
-                <h2 className="text-lg font-bold text-white mb-6">รายละเอียดเปรียบเทียบ</h2>
+                <h2 className="text-lg font-bold text-white mb-6 uppercase tracking-wider">รายละเอียดเปรียบเทียบ</h2>
                 
                 <div className="w-full overflow-x-auto">
                     <table className="w-full text-left border-collapse min-w-[600px]">
                         <tbody>
-                            {/* Table Row: รุ่นรถ */}
+                            {/* Table Row: SKU */}
                             <tr className="border-b border-gray-800/50">
-                                <td className="py-4 pr-4 font-semibold text-gray-300 w-32 md:w-1/4">รุ่นรถ</td>
-                                {items.map(item => (
-                                    <td key={`carModel-${item.id}`} className="py-4 px-4 text-gray-400 w-1/4">{item.specs.carModel}</td>
+                                <td className="py-4 pr-4 font-semibold text-gray-300 w-32 md:w-1/4">SKU</td>
+                                {compareItems.map(item => (
+                                    <td key={`sku-${item.id}`} className="py-4 px-4 text-gray-400 w-1/4">{item.sku}</td>
                                 ))}
                             </tr>
-                            {/* Table Row: ประเภท */}
+                            
+                            {/* Dynamic Specification Rows */}
+                            {allSpecKeys.map((key: string) => (
+                              <tr key={key} className="border-b border-gray-800/50">
+                                <td className="py-4 pr-4 font-semibold text-gray-300 capitalize">{key}</td>
+                                {compareItems.map(item => {
+                                  const specs = parseSpecs(item.specifications);
+                                  const spec = specs.find((s: any) => s.key === key);
+                                  return (
+                                    <td key={`${key}-${item.id}`} className="py-4 px-4 text-gray-400">
+                                      {spec ? spec.value : '-'}
+                                    </td>
+                                  );
+                                })}
+                              </tr>
+                            ))}
+
+                            {/* Table Row: แบรนด์ */}
                             <tr className="border-b border-gray-800/50">
-                                <td className="py-4 pr-4 font-semibold text-gray-300">ประเภท</td>
-                                {items.map(item => (
-                                    <td key={`type-${item.id}`} className="py-4 px-4 text-gray-400">{item.specs.type}</td>
-                                ))}
-                            </tr>
-                            {/* Table Row: อายุการใช้งาน */}
-                            <tr className="border-b border-gray-800/50">
-                                <td className="py-4 pr-4 font-semibold text-gray-300">อายุการใช้งาน</td>
-                                {items.map(item => (
-                                    <td key={`lifespan-${item.id}`} className="py-4 px-4 text-gray-400">{item.specs.lifespan}</td>
-                                ))}
-                            </tr>
-                            {/* Table Row: การรับประกัน */}
-                            <tr className="border-b border-gray-800/50">
-                                <td className="py-4 pr-4 font-semibold text-gray-300">การรับประกัน</td>
-                                {items.map(item => (
-                                    <td key={`warranty-${item.id}`} className="py-4 px-4 text-gray-400">{item.specs.warranty}</td>
-                                ))}
-                            </tr>
-                            {/* Table Row: ชนิด */}
-                            <tr className="border-b border-gray-800/50">
-                                <td className="py-4 pr-4 font-semibold text-gray-300">ชนิด</td>
-                                {items.map(item => (
-                                    <td key={`kind-${item.id}`} className="py-4 px-4 text-gray-400">{item.specs.kind}</td>
-                                ))}
-                            </tr>
-                            {/* Table Row: วัสดุ */}
-                            <tr>
-                                <td className="py-4 pr-4 font-semibold text-gray-300">วัสดุ</td>
-                                {items.map(item => (
-                                    <td key={`material-${item.id}`} className="py-4 px-4 text-gray-400">{item.specs.material}</td>
+                                <td className="py-4 pr-4 font-semibold text-gray-300">แบรนด์</td>
+                                {compareItems.map(item => (
+                                    <td key={`brand-${item.id}`} className="py-4 px-4 text-gray-400">{item.brand}</td>
                                 ))}
                             </tr>
                         </tbody>
@@ -206,9 +161,8 @@ export default function ComparePage() {
                   <AlertCircle className="w-8 h-8 text-gray-400" />
               </div>
               <h2 className="text-xl md:text-2xl font-bold text-white mb-3">ยังไม่มีสินค้าในรายการเปรียบเทียบ</h2>
-              <p className="text-gray-400 text-sm mb-8 text-center max-w-md">กรุณาเลือกสินค้าจากหน้าหลักเพื่อเปรียบเทียบ (สูงสุด 3 รายการ)</p>
+              <p className="text-gray-400 text-sm mb-8 text-center max-w-md">กรุณาเลือกสินค้าจากหน้าหลักและกด "เปรียบเทียบ" เพื่อเริ่มการตรวจสอบสเปก (สูงสุด 3 รายการ)</p>
               
-              {/* ปุ่มกลับหน้ารวมสินค้าตามที่ขอ */}
               <Link 
                 to="/products" 
                 className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-md transition-colors shadow-lg shadow-red-900/20"

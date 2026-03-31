@@ -1,17 +1,79 @@
 import { useState } from 'react';
-import { User, Lock, Mail, ArrowRight, ShieldCheck, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { User, Lock, Mail, ArrowRight, ShieldCheck, ArrowLeft, AlertCircle, Loader2, CheckCircle } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function RegisterPage() {
-  // สร้าง state สำหรับเปลี่ยนหน้า (1 = กรอกข้อมูล, 2 = กรอก OTP)
+  // สร้าง state สำหรับเปลี่ยนหน้า (1 = กรอกข้อมูล, 2 = กรอก OTP (ข้าม), 3 = สำเร็จ)
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState('');
+  
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  
+  const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const navigate = useNavigate();
 
-  // จำลองการกดปุ่มสมัคร
-  const handleRegisterClick = (e: React.FormEvent) => {
+  const handleRegisterClick = async (e: React.FormEvent) => {
     e.preventDefault();
-    // ถ้าเชื่อมต่อ Backend ก็จะยิง API ตรงนี้แล้วค่อย setStep(2)
-    setStep(2);
+    if (password !== confirmPassword) {
+      setErrorMsg('รหัสผ่านไม่ตรงกัน');
+      return;
+    }
+    setErrorMsg('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('http://localhost:8080/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        // เข้าสู่ระบบ OTP Step 2
+        setStep(2); 
+      } else {
+        setErrorMsg(data.error || 'ไม่สามารถสมัครสมาชิกได้');
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOTP = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length < 6) {
+      setErrorMsg('กรุณากรอก OTP ให้ครบ 6 หลัก');
+      return;
+    }
+    setErrorMsg('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('http://localhost:8080/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+         setStep(3); // ยืนยันสำเร็จ ไปหน้าสีเขียว
+      } else {
+         setErrorMsg(data.error || 'รหัส OTP ไม่ถูกต้องหรือหมดอายุ');
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,9 +109,17 @@ export default function RegisterPage() {
         {/* Form Box (Glassmorphism effect) */}
         <div className="bg-[#111111]/80 backdrop-blur-md border border-gray-800 rounded-3xl w-full p-8 shadow-2xl transition-all duration-300">
           
-          {step === 1 ? (
+          {step === 1 && (
             /* ================= STEP 1: กรอกข้อมูล ================= */
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              
+              {errorMsg && (
+                <div className="mb-4 bg-red-900/30 border border-red-500/50 text-red-400 px-4 py-3 rounded-xl flex items-center gap-2 text-sm font-medium animate-in fade-in">
+                  <AlertCircle className="w-5 h-5 shrink-0" />
+                  <span>{errorMsg}</span>
+                </div>
+              )}
+
               <form className="space-y-4" onSubmit={handleRegisterClick}>
                 {/* Name Input */}
                 <div className="relative">
@@ -58,7 +128,9 @@ export default function RegisterPage() {
                   </div>
                   <input 
                     type="text" 
-                    placeholder="ชื่อ-นามสกุล" 
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="ชื่อผู้ใช้งาน" 
                     required
                     className="w-full bg-[#0a0a0a] border border-gray-800 focus:border-red-600 text-white rounded-xl py-3.5 pl-12 pr-4 outline-none transition-colors placeholder:text-gray-600 font-medium"
                   />
@@ -71,6 +143,8 @@ export default function RegisterPage() {
                   </div>
                   <input 
                     type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="อีเมล" 
                     required
                     className="w-full bg-[#0a0a0a] border border-gray-800 focus:border-red-600 text-white rounded-xl py-3.5 pl-12 pr-4 outline-none transition-colors placeholder:text-gray-600 font-medium"
@@ -84,6 +158,8 @@ export default function RegisterPage() {
                   </div>
                   <input 
                     type="password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="รหัสผ่าน" 
                     required
                     className="w-full bg-[#0a0a0a] border border-gray-800 focus:border-red-600 text-white rounded-xl py-3.5 pl-12 pr-4 outline-none transition-colors placeholder:text-gray-600 font-medium"
@@ -97,6 +173,8 @@ export default function RegisterPage() {
                   </div>
                   <input 
                     type="password" 
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="ยืนยันรหัสผ่าน" 
                     required
                     className="w-full bg-[#0a0a0a] border border-gray-800 focus:border-red-600 text-white rounded-xl py-3.5 pl-12 pr-4 outline-none transition-colors placeholder:text-gray-600 font-medium"
@@ -106,10 +184,15 @@ export default function RegisterPage() {
                 {/* Register Button */}
                 <button 
                   type="submit" 
-                  className="w-full bg-[#db2b2b] hover:bg-red-500 text-white font-bold rounded-xl py-4 mt-4 transition-all flex items-center justify-center gap-2 group shadow-[0_4px_14px_0_rgba(219,43,43,0.39)] hover:shadow-[0_6px_20px_rgba(219,43,43,0.23)] hover:-translate-y-0.5"
+                  disabled={loading}
+                  className="w-full bg-[#db2b2b] hover:bg-red-500 disabled:opacity-50 text-white font-bold rounded-xl py-4 mt-4 transition-all flex items-center justify-center gap-2 group shadow-[0_4px_14px_0_rgba(219,43,43,0.39)] hover:shadow-[0_6px_20px_rgba(219,43,43,0.23)] hover:-translate-y-0.5"
                 >
-                  สมัครสมาชิก 
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+                    <>
+                      สมัครสมาชิก 
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </>
+                  )}
                 </button>
               </form>
 
@@ -121,7 +204,9 @@ export default function RegisterPage() {
                  </Link>
               </div>
             </div>
-          ) : (
+          )}
+          
+          {step === 2 && (
             /* ================= STEP 2: ยืนยัน OTP ================= */
             <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center text-center">
               
@@ -131,10 +216,17 @@ export default function RegisterPage() {
 
               <h2 className="text-2xl font-bold text-white mb-2">ยืนยันตัวตน</h2>
               <p className="text-gray-400 text-sm mb-8 px-4 leading-relaxed">
-                กรุณาระบุรหัส OTP 6 หลัก<br/>ที่เราได้ส่งไปยังอีเมลของคุณ
+                กรุณาระบุรหัส OTP 6 หลัก<br/>ที่เราได้ส่งไปยังอีเมล <span className="text-white font-bold">{email}</span> ของคุณ
               </p>
 
-              <form className="w-full space-y-6">
+              {errorMsg && (
+                <div className="mb-4 bg-red-900/30 border border-red-500/50 text-red-400 px-4 py-3 rounded-xl flex items-center gap-2 text-sm font-medium animate-in fade-in">
+                  <AlertCircle className="w-5 h-5 shrink-0" />
+                  <span>{errorMsg}</span>
+                </div>
+              )}
+
+              <form className="w-full space-y-6" onSubmit={handleVerifyOTP}>
                 {/* OTP Input (แบบกล่องยาว ใส่ตัวเลข 6 หลัก) */}
                 <div>
                   <input 
@@ -149,11 +241,16 @@ export default function RegisterPage() {
 
                 {/* Confirm Button */}
                 <button 
-                  type="button" 
-                  className="w-full bg-[#db2b2b] hover:bg-red-500 text-white font-bold rounded-xl py-4 transition-all flex items-center justify-center gap-2 group shadow-[0_4px_14px_0_rgba(219,43,43,0.39)] hover:-translate-y-0.5"
+                  type="submit" 
+                  disabled={loading}
+                  className="w-full bg-[#db2b2b] hover:bg-red-500 disabled:opacity-50 text-white font-bold rounded-xl py-4 transition-all flex items-center justify-center gap-2 group shadow-[0_4px_14px_0_rgba(219,43,43,0.39)] hover:-translate-y-0.5"
                 >
-                  ยืนยัน OTP
-                  <ShieldCheck className="w-5 h-5" />
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+                    <>
+                      ยืนยัน OTP
+                      <ShieldCheck className="w-5 h-5" />
+                    </>
+                  )}
                 </button>
               </form>
 
@@ -170,7 +267,29 @@ export default function RegisterPage() {
                     กลับไปหน้าสมัคร
                  </button>
               </div>
+            </div>
+          )}
 
+          {step === 3 && (
+            /* ================= STEP 3: สำเร็จ ================= */
+            <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center text-center">
+              
+              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-6">
+                <CheckCircle className="w-8 h-8 text-green-500" />
+              </div>
+
+              <h2 className="text-2xl font-bold text-white mb-2">สมัครสมาชิกสำเร็จ!</h2>
+              <p className="text-gray-400 text-sm mb-8 px-4 leading-relaxed">
+                ตอนนี้คุณเป็นสมาชิกของ PARTPOINT เรียบร้อยแล้ว
+              </p>
+
+              <button 
+                onClick={() => navigate('/login')}
+                className="w-full bg-[#db2b2b] hover:bg-red-500 text-white font-bold rounded-xl py-4 transition-all flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(219,43,43,0.39)] hover:-translate-y-0.5"
+              >
+                ไปหน้าเข้าสู่ระบบ
+                <ArrowRight className="w-5 h-5" />
+              </button>
             </div>
           )}
 

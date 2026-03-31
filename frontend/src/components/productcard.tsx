@@ -1,4 +1,4 @@
-
+import { Link } from 'react-router-dom';
 
 // กำหนด Type สำหรับ Properties ที่ ProductCard จะรับเข้ามา
 export interface ProductCardProps {
@@ -11,6 +11,7 @@ export interface ProductCardProps {
 }
 
 export default function ProductCard({
+  id,
   name,
   price,
   imageUrl,
@@ -18,6 +19,7 @@ export default function ProductCard({
   tags = [],
 }: ProductCardProps) {
   return (
+    <Link to={`/product/${id}`} className="block">
     <div className="group relative bg-[#181818] rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(220,38,38,0.2)]">
       {/* Background Gradient on Hover (เส้นขอบแดงเรืองแสง) */}
       <div 
@@ -90,5 +92,6 @@ export default function ProductCard({
         </div>
       </div>
     </div>
+    </Link>
   );
 }

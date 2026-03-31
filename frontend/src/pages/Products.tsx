@@ -1,42 +1,55 @@
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
-import { Search, ChevronDown, ShoppingCart, Eye, Plus } from 'lucide-react';
+import { Search, ChevronDown, ShoppingCart, Eye, Plus, Loader2, Check } from 'lucide-react';
+import { getBrandLogo } from '../utils/brandLogos';
+import FavButton from '../components/FavButton';
+import CompareBar from '../components/CompareBar';
+import { useCompare } from '../context/CompareContext';
 
-// ข้อมูลจำลองสำหรับแสดงผล (อิงตามรูป)
-const productsData = [
-  {
-    id: 1,
-    name: 'ยาง DS 285/70R17 MT431',
-    brandLogo: '/logos/benz.png', // เปลี่ยนเป็นรูปแบรนด์จริงที่มีในเครื่องถ้ามี
-    brandName: 'Deestone',
-    description: 'ยาง Deestone MT431 ลุยเต็มขั้นพิชิตทุกเส้นทาง กล้าท้าทายทุกเส้นทางด้วยโครงสร้างแข็งแรงพิเศษ ทนทานต่อการบาดตำ รองรับทุกแรงกระแทก ไม่หวั่นทุกการตะกุย สะบัดโคลน',
-    price: '6,230',
-    source: 'autobacs.co.th',
-    imageUrl: '/Example_product_pic/Product1.png' // ใช้รูปจาก Example_product_pic
-  },
-  {
-    id: 2,
-    name: 'ยาง DS 215/70R15 T88',
-    brandLogo: '/logos/benz.png',
-    brandName: 'Deestone',
-    description: 'ยาง Deestone T88 ที่ออกแบบมาสำหรับรถปิคอัพ และรถตู้โดยสารเพื่อรองรับงานบรรทุกขนส่งทั่วไป ด้วยโครงสร้างยางที่แข็งแกร่งให้สมรรถนะที่ดีเยี่ยม แต่คงไว้ซึ่งความสบายในการทุกการขับขี่',
-    price: '2,610',
-    source: 'autobacs.co.th',
-    imageUrl: '/Example_product_pic/product2.1.png'
-  },
-  {
-    id: 3,
-    name: 'ยาง MIC 215/55R17 94V',
-    brandLogo: '/logos/benz.png',
-    brandName: 'Michelin',
-    description: 'ยาง Deestone T88 ที่ออกแบบมาสำหรับรถปิคอัพ และรถตู้โดยสารเพื่อรองรับงานบรรทุกขนส่งทั่วไป ด้วยโครงสร้างยางที่แข็งแกร่งให้สมรรถนะที่ดีเยี่ยม แต่คงไว้ซึ่งความสบายในการทุกการขับขี่',
-    price: '2,610',
-    source: 'autobacs.co.th',
-    imageUrl: '/Example_product_pic/Product3.png'
-  }
-];
+interface Product {
+  id: number;
+  sku: string;
+  name: string;
+  brand: string;
+  description: string;
+  imageURL: string;
+  specifications: string;
+  tags: string;
+  basePrice: number;
+  promoPrice: number;
+  stock: number;
+  affiliateLink: string;
+}
 
 export default function ProductsPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const { addToCompare, isInCompare } = useCompare();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch('http://localhost:8080/products');
+        if (res.ok) {
+          const data = await res.json();
+          setProducts(data || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  const filteredProducts = products.filter(p =>
+    p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.brand?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   return (
     <div className="min-h-screen flex flex-col bg-[#0a0a0a] overflow-hidden font-sans">
       <Navbar />
@@ -60,6 +73,8 @@ export default function ProductsPage() {
             <input
               type="text"
               placeholder="ค้นหาอะไหล่"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-[#1a1a1a] text-gray-300 border border-gray-700 rounded-md py-3 px-4 focus:outline-none focus:border-red-600"
             />
             <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-red-600 w-5 h-5 cursor-pointer" />
@@ -82,26 +97,52 @@ export default function ProductsPage() {
         </div>
 
         {/* Product Grid */}
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-10 h-10 text-red-500 animate-spin" />
+          </div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="text-center py-20 text-gray-500">
+            <p className="text-xl font-bold mb-2">ไม่พบสินค้า</p>
+            <p className="text-sm">ลองค้นหาคำอื่น หรือเพิ่มสินค้าผ่านระบบแอดมิน</p>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {productsData.map((product) => (
+          {filteredProducts.map((product) => {
+            const price = product.promoPrice > 0 ? product.promoPrice : product.basePrice;
+            return (
             <div key={product.id} className="bg-[#121212] border border-gray-800 rounded-lg overflow-hidden flex flex-col shadow-lg hover:border-red-600/50 transition-colors duration-300">
 
-              {/* Product Image (White Background Area) */}
-              <div className="bg-white p-4 h-64 flex items-center justify-center relative rounded-t-lg">
-                <img src={product.imageUrl} alt={product.name} className="max-h-full max-w-full object-contain drop-shadow-lg" />
-              </div>
+              {/* Product Image */}
+              <Link to={`/product/${product.id}`}>
+                <div className="bg-white p-4 h-64 flex items-center justify-center relative rounded-t-lg">
+                  {product.imageURL ? (
+                    <img src={product.imageURL} alt={product.name} className="max-h-full max-w-full object-contain drop-shadow-lg" />
+                  ) : (
+                    <div className="text-gray-400 text-sm">ไม่มีภาพสินค้า</div>
+                  )}
+                </div>
+              </Link>
+
+              {/* Favourite Heart Button - มุมขวาบน */}
+              <FavButton productId={product.id} />
 
               {/* Product Details */}
               <div className="p-5 flex flex-col flex-grow">
 
                 {/* Title */}
-                <h3 className="text-xl font-bold text-white mb-4 line-clamp-2">{product.name}</h3>
+                <Link to={`/product/${product.id}`}>
+                  <h3 className="text-xl font-bold text-white mb-4 line-clamp-2 hover:text-red-400 transition-colors">{product.name}</h3>
+                </Link>
 
-                {/* Brand Logo (Placeholder box if img not found) */}
+                {/* Brand */}
                 <div className="h-10 mb-4 flex items-center justify-start">
-                  <div className="bg-white px-4 py-1 flex items-center justify-center h-full">
-                    {/* สมมติว่าเป็นโลโก้แบรนด์ ใช้ text แทนไปก่อนให้เหมือนรูป */}
-                    <span className="text-[#e23011] font-black italic text-xl tracking-tighter">{product.brandName}</span>
+                  <div className="bg-white px-4 py-1 flex items-center justify-center h-full rounded">
+                    {getBrandLogo(product.brand) ? (
+                      <img src={getBrandLogo(product.brand)!} alt={product.brand} className="max-h-7 max-w-[100px] object-contain" />
+                    ) : (
+                      <span className="text-[#e23011] font-black italic text-xl tracking-tighter">{product.brand}</span>
+                    )}
                   </div>
                 </div>
 
@@ -113,10 +154,9 @@ export default function ProductsPage() {
                 {/* Price Row */}
                 <div className="flex justify-between items-end mb-4">
                   <div className="flex items-baseline gap-1">
-                    <span className="text-red-500 text-2xl font-bold">{product.price}</span>
+                    <span className="text-red-500 text-2xl font-bold">{price.toLocaleString()}</span>
                     <span className="text-red-500 text-lg font-bold">บาท</span>
                   </div>
-                  <span className="text-gray-500 text-xs">{product.source}</span>
                 </div>
 
                 {/* Action Buttons */}
@@ -130,15 +170,24 @@ export default function ProductsPage() {
 
                   {/* Bottom Row Buttons */}
                   <div className="flex justify-between items-center gap-3">
-                    <button className="flex-1 flex justify-between items-center px-4 py-2 bg-transparent border border-gray-700 hover:border-red-600 rounded-full group transition-colors">
+                    <Link to={`/product/${product.id}`} className="flex-1 flex justify-between items-center px-4 py-2 bg-transparent border border-gray-700 hover:border-red-600 rounded-full group transition-colors">
                       <span className="text-gray-300 text-xs font-semibold">ดูรายละเอียด</span>
                       <Eye className="text-red-600 w-4 h-4 group-hover:scale-110 transition-transform" />
-                    </button>
+                    </Link>
 
-                    <button className="flex items-center gap-2 group">
-                      <span className="text-gray-300 text-xs font-semibold group-hover:text-white transition-colors">เปรียบเทียบ</span>
-                      <div className="bg-red-600 rounded-full p-1 group-hover:bg-red-500 transition-colors">
-                        <Plus className="text-white w-4 h-4" />
+                    <button 
+                      onClick={() => {
+                        if (!isInCompare(product.id)) {
+                          addToCompare(product);
+                        }
+                      }}
+                      className={`flex items-center gap-2 group ${isInCompare(product.id) ? 'opacity-60 cursor-default' : ''}`}
+                    >
+                      <span className={`text-xs font-semibold transition-colors ${isInCompare(product.id) ? 'text-green-400' : 'text-gray-300 group-hover:text-white'}`}>
+                        {isInCompare(product.id) ? 'เพิ่มแล้ว' : 'เปรียบเทียบ'}
+                      </span>
+                      <div className={`rounded-full p-1 transition-colors ${isInCompare(product.id) ? 'bg-green-600' : 'bg-red-600 group-hover:bg-red-500'}`}>
+                        {isInCompare(product.id) ? <Check className="text-white w-4 h-4" /> : <Plus className="text-white w-4 h-4" />}
                       </div>
                     </button>
                   </div>
@@ -146,10 +195,13 @@ export default function ProductsPage() {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
+        )}
       </div>
 
+      <CompareBar />
       <Footer />
     </div>
   );

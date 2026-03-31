@@ -14,6 +14,7 @@ func SetupAuthRoutes(r *gin.Engine, db *gorm.DB) {
 
     // routes
     r.POST("/register", userHandler.Register) //URL http://localhost:8080/register
+    r.POST("/verify-otp", userHandler.VerifyOTP)
     r.POST("/login", userHandler.Login)
     r.POST("/logout", userHandler.Logout)
 }

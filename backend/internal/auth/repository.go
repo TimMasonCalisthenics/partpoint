@@ -10,6 +10,7 @@ type UserRepository interface {
 	GetAll() ([]User, error)
 	Create(user User) (User, error)
 	FindByIdentifier(email string) (User, error)
+	Update(user User) error
 }
 
 type userRepo struct {
@@ -45,4 +46,8 @@ func (r *userRepo) FindByIdentifier(identifier string) (User, error) {
 		return User{}, err
 	}
 	return user, nil
+}
+
+func (r *userRepo) Update(user User) error {
+	return r.db.Save(&user).Error
 }

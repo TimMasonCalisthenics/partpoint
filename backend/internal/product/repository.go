@@ -73,10 +73,12 @@ func (r *productRepo) GetWithPrices(id int) (ProductResponse, error) {
 		return ProductResponse{}, err
 	}
 
-	r.db.Where("product_id = ?", id).Find(&prices)
+	// Preload Store information for each price listing (non-fatal if table doesn't exist)
+	r.db.Preload("Store").Where("\"productId\" = ?", id).Find(&prices)
 
 	return ProductResponse{
 		PartProduct: product,
 		Prices:      prices,
 	}, nil
 }
+
