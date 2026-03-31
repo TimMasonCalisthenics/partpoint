@@ -32,17 +32,25 @@ func main() {
 	}
 
 	// DB config
+	databaseURL := os.Getenv("DATABASE_URL")
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
 
-	dsn := fmt.Sprintf(
-		// เปลี่ยนจาก sslmode=disable เป็น sslmode=require
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=require", 
-		dbHost, dbUser, dbPass, dbName, dbPort,
-	)
+	var dsn string
+	if databaseURL != "" {
+		dsn = databaseURL
+		log.Println("Using DATABASE_URL from environment")
+	} else {
+		dsn = fmt.Sprintf(
+			// เปลี่ยนจาก sslmode=disable เป็น sslmode=require
+			"host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
+			dbHost, dbUser, dbPass, dbName, dbPort,
+		)
+		log.Println("Using DB_* variables from environment")
+	}
 
 	// connect DB
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -78,11 +86,16 @@ func main() {
 
 	r := gin.Default()
 
+	frontendURL := os.Getenv("FRONTEND_URL")
+	if frontendURL == "" {
+		frontendURL = "http://localhost:5173"
+	}
+
 	// =========================
 	// SETUP CORS
 	// =========================
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"}, // อนุญาตให้ Frontend ของเรายิงเข้ามาได้
+		AllowOrigins:     []string{frontendURL}, // อนุญาตให้ Frontend ของเรายิงเข้ามาได้
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -198,9 +211,14 @@ func main() {
 	adminProtected.POST("/upload", uploadHandler.UploadImage)
 	adminProtected.POST("/upload/multiple", uploadHandler.UploadMultipleImages)
 
-	log.Println("Server running on http://localhost:8080")
+	serverPort := os.Getenv("PORT")
+	if serverPort == "" {
+		serverPort = "8080"
+	}
 
-	if err := r.Run(":8080"); err != nil {
+	log.Printf("Server running on http://localhost:%s\n", serverPort)
+
+	if err := r.Run(":" + serverPort); err != nil {
 		log.Fatal(err)
 	}
 }

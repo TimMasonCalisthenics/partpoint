@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -19,6 +20,20 @@ func NewUploadHandler(uploadDir string) *UploadHandler {
 	// สร้างโฟลเดอร์ uploads ถ้ายังไม่มี
 	os.MkdirAll(uploadDir, os.ModePerm)
 	return &UploadHandler{uploadDir: uploadDir}
+}
+
+func (h *UploadHandler) buildImageURL(c *gin.Context, filename string) string {
+	if baseURL := os.Getenv("BACKEND_URL"); baseURL != "" {
+		return strings.TrimRight(baseURL, "/") + "/uploads/" + filename
+	}
+
+	scheme := "http"
+	if c.Request.TLS != nil || c.GetHeader("X-Forwarded-Proto") == "https" {
+		scheme = "https"
+	}
+
+	host := c.Request.Host
+	return fmt.Sprintf("%s://%s/uploads/%s", scheme, host, filename)
 }
 
 // UploadImage รับไฟล์รูปภาพ 1 ไฟล์ แล้วบันทึกลงโฟลเดอร์ uploads
@@ -41,7 +56,7 @@ func (h *UploadHandler) UploadImage(c *gin.Context) {
 	}
 
 	// ส่ง URL กลับ (เส้นทางที่ Frontend เข้าถึงได้)
-	imageURL := "/uploads/" + newFilename
+	imageURL := h.buildImageURL(c, newFilename)
 	c.JSON(http.StatusOK, gin.H{
 		"url":      imageURL,
 		"filename": newFilename,
@@ -71,7 +86,7 @@ func (h *UploadHandler) UploadMultipleImages(c *gin.Context) {
 		if err := c.SaveUploadedFile(file, savePath); err != nil {
 			continue
 		}
-		urls = append(urls, "/uploads/"+newFilename)
+		urls = append(urls, h.buildImageURL(c, newFilename))
 	}
 
 	c.JSON(http.StatusOK, gin.H{

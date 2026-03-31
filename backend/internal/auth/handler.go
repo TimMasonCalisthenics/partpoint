@@ -95,16 +95,17 @@ func (h *UserHandler) Login(c *gin.Context) {
 		return
 	}
 
-	// ส่ง cookie HttpOnly
-	c.SetCookie(
-		"token",
-		tokenString,
-		3600*24,
-		"/",
-		"",
-		false,
-		true,
-	)
+	// ส่ง cookie HttpOnly พร้อม SameSite=None เพื่อให้ browser ส่ง cookie ข้าม origin ได้เมื่อใช้ fetch credentials include
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     "token",
+		Value:    tokenString,
+		MaxAge:   3600 * 24,
+		Path:     "/",
+		Domain:   "",
+		Secure:   false,
+		HttpOnly: true,
+		SameSite: http.SameSiteNoneMode,
+	})
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "login success",
@@ -115,7 +116,16 @@ func (h *UserHandler) Login(c *gin.Context) {
 // LOGOUT - ลบ cookie
 func (h *UserHandler) Logout(c *gin.Context) {
 	// ลบ cookie token
-	c.SetCookie("token", "", -1, "/", "localhost", false, true)
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     "token",
+		Value:    "",
+		MaxAge:   -1,
+		Path:     "/",
+		Domain:   "",
+		Secure:   false,
+		HttpOnly: true,
+		SameSite: http.SameSiteNoneMode,
+	})
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "logout success",
