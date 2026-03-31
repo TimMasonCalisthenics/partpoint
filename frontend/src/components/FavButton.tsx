@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../config';
 
 interface FavButtonProps {
   productId: number;
@@ -15,7 +16,7 @@ export default function FavButton({ productId }: FavButtonProps) {
     if (!user) return;
     const checkFav = async () => {
       try {
-        const res = await fetch('http://localhost:8080/fav', { credentials: 'include' });
+        const res = await fetch(`${API_BASE_URL}/fav`, { credentials: 'include' });
         if (res.ok) {
           const favs = await res.json();
           if (Array.isArray(favs)) {
@@ -38,7 +39,7 @@ export default function FavButton({ productId }: FavButtonProps) {
     }
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:8080/fav', {
+      const res = await fetch(`${API_BASE_URL}/fav`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

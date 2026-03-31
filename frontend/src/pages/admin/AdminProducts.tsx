@@ -145,7 +145,7 @@ export default function AdminProducts() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('http://localhost:8080/products', {
+      const res = await fetch(`${API_BASE_URL}/products`, {
         credentials: 'include'
       });
       if (res.ok) {
@@ -241,7 +241,7 @@ export default function AdminProducts() {
   const handleDelete = async (id: number) => {
     if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?')) {
       try {
-        const res = await fetch(`http://localhost:8080/products/${id}`, {
+        const res = await fetch(`${API_BASE_URL}/products/${id}`, {
           method: 'DELETE',
           credentials: 'include'
         });
@@ -280,7 +280,7 @@ export default function AdminProducts() {
     try {
       if (formData.id === 0) {
         // Create
-        const res = await fetch('http://localhost:8080/products', {
+        const res = await fetch(`${API_BASE_URL}/products`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -294,7 +294,7 @@ export default function AdminProducts() {
         }
       } else {
         // Update
-        const res = await fetch(`http://localhost:8080/products/${formData.id}`, {
+        const res = await fetch(`${API_BASE_URL}/products/${formData.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -332,7 +332,7 @@ export default function AdminProducts() {
       formDataUpload.append('image', files[i]);
 
       try {
-        const res = await fetch('http://localhost:8080/upload', {
+        const res = await fetch(`${API_BASE_URL}/upload`, {
           method: 'POST',
           credentials: 'include',
           body: formDataUpload,

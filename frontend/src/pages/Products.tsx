@@ -5,6 +5,7 @@ import Footer from '../components/footer';
 import CompareBar from '../components/CompareBar';
 import { Search, ChevronDown, ShoppingCart, Eye, Plus } from 'lucide-react';
 import { useCompare } from '../context/CompareContext';
+import { API_BASE_URL } from '../config';
 
 // ข้อมูลจำลองสำหรับแสดงผล (อิงตามรูป)
 const productsData = [
@@ -373,7 +374,7 @@ export default function ProductsPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch('http://localhost:8080/products');
+        const res = await fetch(`${API_BASE_URL}/products`);
         if (!res.ok) {
           throw new Error(`Products fetch failed: ${res.status}`);
         }
