@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -25,6 +26,22 @@ import (
 	"backend/internal/vehicle"
 )
 
+func normalizePostgresURL(urlStr string) string {
+	if urlStr == "" {
+		return ""
+	}
+
+	if strings.Contains(urlStr, "sslmode=") {
+		return urlStr
+	}
+
+	if strings.Contains(urlStr, "?") {
+		return urlStr + "&sslmode=require"
+	}
+
+	return urlStr + "?sslmode=require"
+}
+
 func main() {
 	// โหลด .env
 	if err := godotenv.Load(); err != nil {
@@ -40,12 +57,16 @@ func main() {
 	dbName := os.Getenv("DB_NAME")
 
 	var dsn string
+	supabaseURL := os.Getenv("SUPABASE_DATABASE_URL")
+
 	if databaseURL != "" {
-		dsn = databaseURL
+		dsn = normalizePostgresURL(databaseURL)
 		log.Println("Using DATABASE_URL from environment")
+	} else if supabaseURL != "" {
+		dsn = normalizePostgresURL(supabaseURL)
+		log.Println("Using SUPABASE_DATABASE_URL from environment")
 	} else {
 		dsn = fmt.Sprintf(
-			// เปลี่ยนจาก sslmode=disable เป็น sslmode=require
 			"host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
 			dbHost, dbUser, dbPass, dbName, dbPort,
 		)
