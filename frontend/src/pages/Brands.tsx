@@ -52,6 +52,7 @@ const shockBrands = [
   { name: 'Fox', bgImage: '/Brandpart/shock_absorbers_Brand/fox-racing-shox-1.svg', link: true },
   { name: 'Koni', bgImage: '/Brandpart/shock_absorbers_Brand/Koni.png', link: true },
   { name: 'KYB', bgImage: '/Brandpart/shock_absorbers_Brand/kyb-gas-shocks-1.svg', link: true },
+  { name: 'KW', bgImage: '/Brandpart/shock_absorbers_Brand/kw.png', link: true }
 ];
 
 const batteryBrands = [
