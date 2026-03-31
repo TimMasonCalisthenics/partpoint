@@ -163,10 +163,22 @@ export default function ProductsPage() {
                 <div className="flex flex-col gap-3">
 
                   {/* Order Button */}
-                  <button className="w-full flex justify-between items-center px-4 py-3 bg-transparent border border-gray-700 hover:border-red-600 rounded-md group transition-colors">
-                    <span className="text-white font-bold">สั่งซื้อสินค้า</span>
-                    <ShoppingCart className="text-red-600 w-5 h-5 group-hover:scale-110 transition-transform" />
-                  </button>
+                  {product.affiliateLink ? (
+                    <a
+                      href={product.affiliateLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full flex justify-between items-center px-4 py-3 bg-transparent border border-gray-700 hover:border-red-600 rounded-md group transition-colors"
+                    >
+                      <span className="text-white font-bold">สั่งซื้อสินค้า</span>
+                      <ShoppingCart className="text-red-600 w-5 h-5 group-hover:scale-110 transition-transform" />
+                    </a>
+                  ) : (
+                    <button className="w-full flex justify-between items-center px-4 py-3 bg-transparent border border-gray-700 hover:border-red-600 rounded-md group transition-colors">
+                      <span className="text-white font-bold">สั่งซื้อสินค้า</span>
+                      <ShoppingCart className="text-red-600 w-5 h-5 group-hover:scale-110 transition-transform" />
+                    </button>
+                  )}
 
                   {/* Bottom Row Buttons */}
                   <div className="flex justify-between items-center gap-3">
