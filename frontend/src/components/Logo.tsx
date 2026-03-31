@@ -1,5 +1,3 @@
-import React from 'react';
-
 // You can create a reusable Logo component here if you want to use it in multiple places.
 export const Logo = () => (
   <div className="relative w-full h-full flex items-center justify-center">
