@@ -39,7 +39,8 @@ func main() {
 	dbName := os.Getenv("DB_NAME")
 
 	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		// เปลี่ยนจาก sslmode=disable เป็น sslmode=require
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=require", 
 		dbHost, dbUser, dbPass, dbName, dbPort,
 	)
 
