@@ -44,7 +44,7 @@ export default function ProductsPage() {
       {/* Hero Image Section (ใช้รูปเครื่องยนต์ที่มีอยู่แทนไปก่อน) */}
       <div className="w-full h-80 md:h-96 relative border-b-4 border-red-600">
         <img
-          src="/Carpart/BG_Search_menu.png"
+          src="/CarPart/BG_Search_menu.png"
           alt="Engine Parts"
           className="w-full h-full object-cover grayscale opacity-50 mix-blend-screen"
         />
