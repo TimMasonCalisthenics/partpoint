@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { getBrandLogo } from '../utils/brandLogos';
 import { useCompare } from '../context/CompareContext';
 import CompareBar from '../components/CompareBar';
+import { API_BASE_URL } from '../config';
 
 // Types
 interface Store {
@@ -59,7 +60,7 @@ export default function ProductDetailsPage() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/products/${id}`);
+        const res = await fetch(`${API_BASE_URL}/products/${id}`);
         if (res.ok) {
           const data = await res.json();
           setProduct(data);
@@ -79,8 +80,7 @@ export default function ProductDetailsPage() {
     if (!user) return;
     const checkFav = async () => {
       try {
-        const res = await fetch('http://localhost:8080/fav', { credentials: 'include' });
-        if (res.ok) {
+        const res = await fetch(`${API_BASE_URL}/fav`, { credentials: 'include' });
           const favs = await res.json();
           if (Array.isArray(favs)) {
             setIsFav(favs.some((f: { productId: number }) => f.productId === Number(id)));
@@ -100,7 +100,7 @@ export default function ProductDetailsPage() {
     }
     setFavLoading(true);
     try {
-      const res = await fetch('http://localhost:8080/fav', {
+      const res = await fetch(`${API_BASE_URL}/fav`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

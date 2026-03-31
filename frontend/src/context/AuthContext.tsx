@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 
 // ประกาศประเภทข้อมูล User
 interface User {
@@ -37,7 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const checkAuthStatus = async () => {
     try {
       // โหลดข้อมูล Profile จาก Backend ทันทีที่เข้าแอป (แนบ cookie อัตโนมัติด้วย credentials)
-      const res = await fetch('http://localhost:8080/profile', {
+      const res = await fetch(`${API_BASE_URL}/profile`, {
         credentials: 'include',
       });
       if (res.ok) {
@@ -61,7 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       // สั่งให้ Backend ลบ cookie ทิ้ง
-      await fetch('http://localhost:8080/logout', { 
+      await fetch(`${API_BASE_URL}/logout`, { 
         method: 'POST', 
         credentials: 'include' 
       });

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import AdminLayout from '../../layouts/AdminLayout';
+import { API_BASE_URL } from '../../config';
 import { 
   Users, 
   Search, 
@@ -31,7 +32,7 @@ export default function UserManagementPage() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch('http://localhost:8080/users', { 
+      const res = await fetch(`${API_BASE_URL}/users`, { 
         credentials: 'include' 
       });
       if (res.ok) {
@@ -47,7 +48,7 @@ export default function UserManagementPage() {
 
   const handleUpdateRole = async (id: number, newRole: string) => {
     try {
-      const res = await fetch(`http://localhost:8080/users/${id}/role`, {
+      const res = await fetch(`${API_BASE_URL}/users/${id}/role`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: newRole }),
@@ -61,7 +62,7 @@ export default function UserManagementPage() {
 
   const handleToggleStatus = async (id: number, currentStatus: boolean) => {
     try {
-      const res = await fetch(`http://localhost:8080/users/${id}/status`, {
+      const res = await fetch(`${API_BASE_URL}/users/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isEnabled: !currentStatus }),

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { User, Lock, Mail, ArrowRight, ShieldCheck, ArrowLeft, AlertCircle, Loader2, CheckCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 export default function RegisterPage() {
   // สร้าง state สำหรับเปลี่ยนหน้า (1 = กรอกข้อมูล, 2 = กรอก OTP (ข้าม), 3 = สำเร็จ)
@@ -27,7 +28,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:8080/register', {
+      const res = await fetch(`${API_BASE_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }),
@@ -57,7 +58,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:8080/verify-otp', {
+      const res = await fetch(`${API_BASE_URL}/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp }),
