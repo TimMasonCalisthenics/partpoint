@@ -27,11 +27,15 @@ func (r *favouriteRepository) Remove(userID int, productID int) error {
 		Delete(&Favourite{}).Error
 }
 
+
+
 func (r *favouriteRepository) GetByUser(userID int) ([]Favourite, error) {
 	var favs []Favourite
 	err := r.db.Where(`"userId" = ?`, userID).Find(&favs).Error
 	return favs, err
 }
+
+
 
 func (r *favouriteRepository) Exists(userID int, productID int) (bool, error) {
 	var count int64
@@ -42,27 +46,32 @@ func (r *favouriteRepository) Exists(userID int, productID int) (bool, error) {
 	return count > 0, err
 }
 
+
+
 func (r *favouriteRepository) GetUserFavWithProduct(userID int) ([]map[string]interface{}, error) {
 	var results []map[string]interface{}
 
 	err := r.db.Table("favorites").
 		Select(`
-			favorites.id as fav_id,
-			PartProduct.id as product_id,
-			PartProduct.name,
-			PartProduct.description,
-			PartProduct.imageURL as "imageURL",
-			Vehicle.brand,
-			Vehicle.model,
-			Vehicle.year
+			"favorites"."id" as fav_id,
+			"part_products"."id" as product_id,
+			"part_products"."name",
+			"part_products"."description",
+			"part_products"."imageURL",
+			"vehicles"."brand",
+			"vehicles"."model",
+			"vehicles"."year"
 		`).
-		Joins("JOIN \"PartProduct\" ON \"PartProduct\".id = favorites.\"productId\"").
-		Joins("LEFT JOIN \"Vehicle\" ON \"Vehicle\".id = \"PartProduct\".\"vehicleId\"").
-		Where("favorites.\"userId\" = ?", userID).
+		Joins(`JOIN "part_products" ON "part_products"."id" = "favorites"."productId"`).
+		Joins(`LEFT JOIN "vehicles" ON "vehicles"."id" = "part_products"."vehicleId"`).
+		Where(`"favorites"."userId" = ?`, userID).
 		Scan(&results).Error
 
 	return results, err
 }
+
+
+
 
 
 

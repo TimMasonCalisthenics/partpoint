@@ -10,5 +10,6 @@ type Vehicle struct {
 
 // บังคับชื่อ table = Vehicle (ไม่ให้เป็น vehicles)
 func (Vehicle) TableName() string {
-	return "Vehicle"
+	return "vehicles"
 }
+

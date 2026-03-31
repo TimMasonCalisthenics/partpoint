@@ -1,4 +1,5 @@
-package main
+package check_tables
+
 
 import (
 	"fmt"

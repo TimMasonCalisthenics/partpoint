@@ -86,15 +86,37 @@ func main() {
 
 	log.Println("Connected to Database!")
 
+	// Check and rename old tables to new lowercase naming convention if they exist
+	oldTables := map[string]string{
+		"Favorite":      "favorites",
+		"PartProduct":   "part_products",
+		"partproduct":   "part_products", // Handle lowercase variant
+		"Vehicle":       "vehicles",
+		"vehicle":       "vehicles",      // Handle lowercase variant
+		"PriceListings": "price_listings",
+		"Store":         "stores",
+	}
+	for oldName, newName := range oldTables {
+		if db.Migrator().HasTable(oldName) && !db.Migrator().HasTable(newName) {
+			log.Printf("Migrating table %s to %s...\n", oldName, newName)
+			if err := db.Migrator().RenameTable(oldName, newName); err != nil {
+				log.Printf("Warning: Failed to rename table %s: %v\n", oldName, err)
+			}
+		}
+	}
+
+
 	// Auto-migrate our updated models
 	err = db.AutoMigrate(
 		&product.PartProduct{},
 		&auth.User{},
 		&favourite.Favourite{},
+		&vehicle.Vehicle{},
 	)
 	if err != nil {
-		log.Println("Warning: Failed to auto-migrate PartProduct schema:", err)
+		log.Println("Warning: Failed to auto-migrate schema:", err)
 	}
+
 
 	// สร้างบัญชี Admin เริ่มต้น (ถ้ายังไม่มี)
 	var adminCount int64

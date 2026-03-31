@@ -20,8 +20,10 @@ export default function FavButton({ productId }: FavButtonProps) {
         if (res.ok) {
           const favs = await res.json();
           if (Array.isArray(favs)) {
-            setIsFav(favs.some((f: { productId: number }) => f.productId === productId));
+            // Support both camelCase and snake_case from API
+            setIsFav(favs.some((f: any) => (f.product_id || f.productId) === productId));
           }
+
         }
       } catch (err) {
         console.error(err);

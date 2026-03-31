@@ -83,8 +83,9 @@ export default function ProductDetailsPage() {
         const res = await fetch(`${API_BASE_URL}/fav`, { credentials: 'include' });
         const favs = await res.json();
         if (Array.isArray(favs)) {
-          setIsFav(favs.some((f: { productId: number }) => f.productId === Number(id)));
+          setIsFav(favs.some((f: any) => (f.product_id || f.productId) === Number(id)));
         }
+
       } catch (err) {
         console.error(err);
       }
