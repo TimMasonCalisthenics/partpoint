@@ -76,15 +76,14 @@ export default function ProductDetailsPage() {
   }, [id]);
 
   // Check favourite status
-  useEffect(() => {
+ useEffect(() => {
     if (!user) return;
     const checkFav = async () => {
       try {
         const res = await fetch(`${API_BASE_URL}/fav`, { credentials: 'include' });
-          const favs = await res.json();
-          if (Array.isArray(favs)) {
-            setIsFav(favs.some((f: { productId: number }) => f.productId === Number(id)));
-          }
+        const favs = await res.json();
+        if (Array.isArray(favs)) {
+          setIsFav(favs.some((f: { productId: number }) => f.productId === Number(id)));
         }
       } catch (err) {
         console.error(err);
