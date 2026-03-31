@@ -31,16 +31,18 @@ func normalizePostgresURL(urlStr string) string {
 		return ""
 	}
 
-	if strings.Contains(urlStr, "sslmode=") {
-		return urlStr
-	}
+	// Add sslmode=require and default_query_exec_mode=exec for Supabase/PgBouncer compatibility
+	// This completely disables prepared statements to avoid SQLSTATE 08P01
+	params := "sslmode=require&default_query_exec_mode=exec"
 
 	if strings.Contains(urlStr, "?") {
-		return urlStr + "&sslmode=require"
+		return urlStr + "&" + params
 	}
 
-	return urlStr + "?sslmode=require"
+	return urlStr + "?" + params
 }
+
+
 
 func main() {
 	// โหลด .env
@@ -74,7 +76,10 @@ func main() {
 	}
 
 	// connect DB
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		PrepareStmt: false, // ป้องกันปัญหา Prepared Statement "s1" already exists เมื่อใช้กับ Supabase/PgBouncer
+	})
+
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}

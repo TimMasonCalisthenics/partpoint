@@ -8,6 +8,7 @@ import (
 
 func SetupUserRoutes(r *gin.RouterGroup, handler *user.UserHandler) {
 	r.GET("/profile", handler.GetProfile)
+	r.PUT("/profile", handler.UpdateProfile)
 }
 
 func SetupUserAdminRoutes(r *gin.RouterGroup, handler *user.UserHandler) {

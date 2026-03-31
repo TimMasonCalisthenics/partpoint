@@ -60,13 +60,14 @@ export default function FavButton({ productId }: FavButtonProps) {
     <button
       onClick={toggleFav}
       disabled={loading}
-      className={`absolute top-3 right-3 z-20 p-2.5 rounded-full transition-all duration-300 backdrop-blur-sm ${
+      className={`absolute top-4 right-4 z-20 p-2.5 rounded-full transition-all duration-500 backdrop-blur-md border ${
         isFav
-          ? 'bg-red-600/90 text-white shadow-[0_0_15px_rgba(220,38,38,0.5)] scale-110'
-          : 'bg-black/50 text-gray-300 hover:bg-red-600/70 hover:text-white hover:scale-110'
+          ? 'bg-rose-500 text-white shadow-[0_4px_20px_rgba(244,63,94,0.4)] border-rose-400 scale-110'
+          : 'bg-white/10 text-white/70 border-white/10 hover:bg-rose-500/80 hover:text-white hover:border-rose-400/50 hover:scale-110 hover:shadow-lg hover:shadow-rose-500/20'
       }`}
     >
-      <Heart className={`w-5 h-5 transition-all ${isFav ? 'fill-current' : ''} ${loading ? 'animate-pulse' : ''}`} />
+      <Heart className={`w-5 h-5 transition-all duration-300 ${isFav ? 'fill-current scale-110' : 'group-hover:scale-110'} ${loading ? 'animate-pulse' : ''}`} />
     </button>
+
   );
 }

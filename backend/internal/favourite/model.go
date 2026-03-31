@@ -1,8 +1,9 @@
 package favourite
 
 func (Favourite) TableName() string {
-	return "Favorite"
+	return "favorites"
 }
+
 
 type Favourite struct {
 	ID        int `json:"id" gorm:"primaryKey;column:id"`

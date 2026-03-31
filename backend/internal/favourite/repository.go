@@ -45,21 +45,24 @@ func (r *favouriteRepository) Exists(userID int, productID int) (bool, error) {
 func (r *favouriteRepository) GetUserFavWithProduct(userID int) ([]map[string]interface{}, error) {
 	var results []map[string]interface{}
 
-	err := r.db.Table("Favorite").
+	err := r.db.Table("favorites").
 		Select(`
-			"Favorite"."id" as fav_id,
-			"PartProduct"."id" as product_id,
-			"PartProduct"."name",
-			"PartProduct"."description",
-			"PartProduct"."imageURL",
-			"Vehicle"."brand",
-			"Vehicle"."model",
-			"Vehicle"."year"
+			favorites.id as fav_id,
+			PartProduct.id as product_id,
+			PartProduct.name,
+			PartProduct.description,
+			PartProduct.imageURL as "imageURL",
+			Vehicle.brand,
+			Vehicle.model,
+			Vehicle.year
 		`).
-		Joins(`JOIN "PartProduct" ON "PartProduct"."id" = "Favorite"."productId"`).
-		Joins(`LEFT JOIN "Vehicle" ON "Vehicle"."id" = "PartProduct"."vehicleId"`).
-		Where(`"Favorite"."userId" = ?`, userID).
+		Joins("JOIN \"PartProduct\" ON \"PartProduct\".id = favorites.\"productId\"").
+		Joins("LEFT JOIN \"Vehicle\" ON \"Vehicle\".id = \"PartProduct\".\"vehicleId\"").
+		Where("favorites.\"userId\" = ?", userID).
 		Scan(&results).Error
 
 	return results, err
 }
+
+
+

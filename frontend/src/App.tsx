@@ -7,6 +7,7 @@ import RegisterPage from './pages/Register';
 import BrandsPage from './pages/Brands';
 import AboutPage from './pages/About';
 import ProductDetailsPage from './pages/ProductDetails';
+import UserDashboardPage from './pages/UserDashboard';
 import AdminProductsPage from './pages/admin/AdminProducts';
 import AdminDashboardPage from './pages/admin/Dashboard';
 import AdminUserManagementPage from './pages/admin/UserManagement';
@@ -28,6 +29,11 @@ function App() {
             <Route path="/compare" element={<ComparePage />} />
             <Route path="/brands" element={<BrandsPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <UserDashboardPage />
+              </ProtectedRoute>
+            } />
             
             {/* Admin Routes */}
             <Route path="/admin/dashboard" element={

@@ -38,6 +38,70 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+// PUT /api/profile
+func (h *UserHandler) UpdateProfile(c *gin.Context) {
+	userIDRaw, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	userID, ok := userIDRaw.(int)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid userID"})
+		return
+	}
+
+	var req struct {
+		Username        string `json:"username"`
+		Email           string `json:"email"`
+		CurrentPassword string `json:"currentPassword"`
+		NewPassword     string `json:"newPassword"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updates := map[string]interface{}{}
+	if req.Username != "" {
+		updates["username"] = req.Username
+	}
+	if req.Email != "" {
+		updates["email"] = req.Email
+	}
+
+	if req.NewPassword != "" {
+		if req.CurrentPassword == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "current password required"})
+			return
+		}
+		user, err := h.service.GetProfile(userID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to verify user"})
+			return
+		}
+		if user.Password != req.CurrentPassword {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "current password incorrect"})
+			return
+		}
+		updates["password"] = req.NewPassword
+	}
+
+	if len(updates) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "no update fields provided"})
+		return
+	}
+
+	if err := h.service.UpdateUser(userID, updates); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "profile updated"})
+}
+
 // GET /admin/users
 func (h *UserHandler) ListUsers(c *gin.Context) {
 	users, err := h.service.ListAll()

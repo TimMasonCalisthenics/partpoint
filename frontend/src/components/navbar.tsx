@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
-// เรียกใช้ไอคอนจาก lucide-react (ที่เพิ่งลงไป)
 import { Search, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useCompare } from '../context/CompareContext';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
-  // สร้างรายการเมนูไว้เพื่อวนลูปสร้างตัวคั่น (Divider) ง่ายๆ
+  const { compareItems } = useCompare();
   const navLinks = [
     { name: 'หน้าหลัก', path: '/' },
     { name: 'รวมสินค้า', path: '/products' },
@@ -13,6 +13,7 @@ export default function Navbar() {
     { name: 'เทียบสินค้า', path: '/compare' },
     { name: 'เกี่ยวกับเรา', path: '/about' },
   ];
+
 
   return (
     <nav className="bg-black border-b-4 border-red-600 sticky top-0 z-50 text-white shadow-lg">
@@ -57,9 +58,13 @@ export default function Navbar() {
                 </div>
 
                 {/* ปุ่มไปหน้าแอดมิน (ถ้าเป็น Admin) */}
-                {user.role === 'admin' && (
+                {user.role === 'admin' ? (
                   <Link to="/admin/products" className="text-xs bg-red-600/20 text-red-500 border border-red-500/30 px-2 py-1 rounded hover:bg-red-600 hover:text-white transition">
                     ระบบหลังบ้าน
+                  </Link>
+                ) : (
+                  <Link to="/dashboard" className="text-xs bg-red-600/20 text-red-500 border border-red-500/30 px-2 py-1 rounded hover:bg-red-600 hover:text-white transition">
+                    บัญชีของฉัน
                   </Link>
                 )}
 
@@ -92,11 +97,12 @@ export default function Navbar() {
                         `}
               >
                 {link.name}
-                {link.name === 'เทียบสินค้า' && (
-                  <span className="ml-1.5 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-md leading-none">
-                    3
+                {link.name === 'เทียบสินค้า' && compareItems.length > 0 && (
+                  <span className="ml-1.5 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full leading-none min-w-[18px] text-center shadow-lg shadow-red-600/20">
+                    {compareItems.length}
                   </span>
                 )}
+
                 {/* ลูกเล่นเส้นแดงวิ่งด้านล่างเมื่อ Hover */}
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all group-hover:w-full"></span>
               </Link>

@@ -3,9 +3,13 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
 import CompareBar from '../components/CompareBar';
-import { Search, ChevronDown, ShoppingCart, Eye, Plus } from 'lucide-react';
+import { Search, ChevronDown, ShoppingCart, Plus } from 'lucide-react';
 import { useCompare } from '../context/CompareContext';
 import { API_BASE_URL } from '../config';
+import { getBrandLogo } from '../utils/brandLogos';
+import FavButton from '../components/FavButton';
+
+
 
 // ข้อมูลจำลองสำหรับแสดงผล (อิงตามรูป)
 const productsData = [
@@ -748,81 +752,129 @@ export default function ProductsPage() {
             <div className="col-span-full text-center text-gray-400">ไม่พบสินค้าในหมวดหมู่นี้</div>
           ) : (
             filteredProducts.map((product) => (
-              <div key={product.id} className="bg-[#121212] border border-gray-800 rounded-lg overflow-hidden flex flex-col shadow-lg hover:border-red-600/50 transition-colors duration-300">
-
-                {/* Product Image (White Background Area) */}
-                <div className="bg-white p-4 h-64 flex items-center justify-center relative rounded-t-lg">
-                  <img src={product.imageUrl} alt={product.name} className="max-h-full max-w-full object-contain drop-shadow-lg" />
-                </div>
-
-                {/* Product Details */}
-                <div className="p-5 flex flex-col flex-grow">
-
-                  {/* Title */}
-                  <h3 className="text-xl font-bold text-white mb-4 line-clamp-2">{product.name}</h3>
-
-                  {/* Brand Logo (Placeholder box if img not found) */}
-                  <div className="h-10 mb-4 flex items-center justify-start">
-                    <div className="bg-white px-4 py-1 flex items-center justify-center h-full">
-                      {/* สมมติว่าเป็นโลโก้แบรนด์ ใช้ text แทนไปก่อนให้เหมือนรูป */}
-                      <span className="text-[#e23011] font-black italic text-xl tracking-tighter">{product.brandName}</span>
-                    </div>
+              <div key={product.id} className="bg-[#121212] border border-gray-800 hover:border-red-600/50 rounded-xl overflow-hidden flex flex-col shadow-2xl transition-all duration-300 group/card relative">
+                
+                {/* Clickable Area: Image & Top Info */}
+                <Link to={`/product/${product.id}`} className="flex flex-col flex-grow">
+                  {/* Product Image (White Background Area) */}
+                  <div className="bg-white p-6 h-64 flex items-center justify-center relative overflow-hidden">
+                    <img 
+                      src={product.imageUrl} 
+                      alt={product.name} 
+                      className="max-h-full max-w-full object-contain drop-shadow-2xl group-hover/card:scale-110 transition-transform duration-500" 
+                    />
+                    
+                    {/* Hover Overlay Gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
                   </div>
 
-                  {/* Description */}
-                  <p className="text-gray-400 text-xs mb-6 flex-grow leading-relaxed line-clamp-4">
-                    {product.description}
-                  </p>
-
-                  {/* Price Row */}
-                  <div className="flex justify-between items-end mb-4">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-red-500 text-2xl font-bold">{product.price}</span>
-                      <span className="text-red-500 text-lg font-bold">บาท</span>
-                    </div>
-                    <span className="text-gray-500 text-xs">{product.source}</span>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex flex-col gap-3">
-
-                    {/* Order Button */}
-                    <a
-                      href={product.affiliateLink || `/product/${product.id}`}
-                      target={product.affiliateLink ? '_blank' : undefined}
-                      rel={product.affiliateLink ? 'noreferrer' : undefined}
-                      className="w-full flex justify-between items-center px-4 py-3 bg-transparent border border-gray-700 hover:border-red-600 rounded-md group transition-colors"
-                    >
-                      <span className="text-white font-bold">สั่งซื้อสินค้า</span>
-                      <ShoppingCart className="text-red-600 w-5 h-5 group-hover:scale-110 transition-transform" />
-                    </a>
-
-                    {/* Bottom Row Buttons */}
-                    <div className="flex justify-between items-center gap-3">
-                        <Link
-                          to={`/product/${product.id}`}
-                          className="flex-1 flex justify-between items-center px-4 py-2 bg-transparent border border-gray-700 hover:border-red-600 rounded-full group transition-colors"
-                        >
-                          <span className="text-gray-300 text-xs font-semibold">ดูรายละเอียด</span>
-                          <Eye className="text-red-600 w-4 h-4 group-hover:scale-110 transition-transform" />
-                        </Link>
-
-                        <button
-                          type="button"
-                          onClick={() => handleAddToCompare(product)}
-                          className={`flex items-center gap-2 rounded-full px-4 py-2 transition-colors ${isInCompare(product.id) ? 'bg-gray-700 border border-gray-600 text-gray-300 cursor-not-allowed' : 'bg-red-600 hover:bg-red-500 text-white'}`}
-                          disabled={isInCompare(product.id)}
-                        >
-                          <span className="text-xs font-semibold">{isInCompare(product.id) ? 'เพิ่มแล้ว' : 'เปรียบเทียบ'}</span>
-                          <div className="rounded-full p-1 bg-white/10">
-                            <Plus className="text-white w-4 h-4" />
-                          </div>
-                        </button>
+                  {/* Product Details Section */}
+                  <div className="p-6 flex flex-col flex-grow">
+                    {/* Brand Logo & Name */}
+                    <div className="h-10 mb-5 flex items-center justify-start gap-4">
+                      {getBrandLogo(product.brandName) ? (
+                        <div className="bg-white rounded px-3 py-1.5 flex items-center justify-center h-full border border-gray-100 shadow-sm">
+                          <img 
+                            src={getBrandLogo(product.brandName)!} 
+                            alt={product.brandName} 
+                            className="max-h-full max-w-[100px] object-contain" 
+                          />
+                        </div>
+                      ) : (
+                        <div className="bg-white px-4 py-1.5 flex items-center justify-center h-full rounded shadow-sm">
+                          <span className="text-red-600 font-black italic text-xl tracking-tighter lowercase">{product.brandName}</span>
+                        </div>
+                      )}
+                      <div className="flex flex-col">
+                         <span className="text-gray-500 text-[10px] uppercase font-bold tracking-[0.2em]">{product.brandName}</span>
+                         <div className="w-full h-0.5 bg-red-600/30"></div>
                       </div>
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-xl font-bold text-white mb-3 line-clamp-2 group-hover/card:text-red-500 transition-colors">
+                      {product.name}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-gray-400 text-xs mb-6 flex-grow leading-relaxed line-clamp-3">
+                      {product.description}
+                    </p>
+
+                    {/* Price Row */}
+                    <div className="flex justify-between items-end mt-auto">
+                      <div className="flex flex-col">
+                        {(product.promoPrice ?? 0) > 0 && (product.promoPrice ?? 0) < (product.basePrice ?? 0) ? (
+                          <>
+                            <span className="text-gray-500 text-xs line-through flex items-center gap-1">
+                              {(product.basePrice ?? 0).toLocaleString()} <span className="text-[10px]">฿</span>
+                            </span>
+                            <div className="flex items-baseline gap-1.5">
+                              <span className="text-red-500 text-3xl font-black italic">{(product.promoPrice ?? 0).toLocaleString()}</span>
+                              <span className="text-red-500 text-sm font-bold uppercase">baht</span>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="flex items-baseline gap-1.5">
+                            <span className="text-white text-3xl font-black italic">{Number(product.price.replace(/,/g, '')).toLocaleString()}</span>
+                            <span className="text-gray-500 text-sm font-bold uppercase">baht</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
+                </Link>
+
+                {/* Bottom Actions Area */}
+                <div className="px-6 pb-6">
+                   <div className="w-full h-px bg-gray-800 mb-6"></div>
+
+                   {/* Action Buttons: Kept outside the main Link */}
+                   <div className="flex flex-col gap-3">
+                      {/* Order Button */}
+                      <a
+                        href={product.affiliateLink || `/product/${product.id}`}
+                        target={product.affiliateLink ? '_blank' : undefined}
+                        rel={product.affiliateLink ? 'noreferrer' : undefined}
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-full flex justify-between items-center px-5 py-4 bg-red-600 hover:bg-red-700 text-white rounded-xl group/btn transition-all shadow-lg shadow-red-600/10 hover:shadow-red-600/20 active:scale-[0.98]"
+                      >
+                        <span className="font-black italic uppercase tracking-wider text-sm">สั่งซื้อสินค้า</span>
+                        <div className="bg-white/20 p-1.5 rounded-lg">
+                          <ShoppingCart className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
+                        </div>
+                      </a>
+
+                      {/* Bottom Row Buttons: Compare & Fav */}
+                      <div className="flex justify-between items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleAddToCompare(product);
+                            }}
+                            disabled={isInCompare(product.id)}
+                            className={`flex-1 flex justify-between items-center px-5 py-3 border rounded-xl group/comp transition-all ${
+                              isInCompare(product.id) 
+                              ? 'bg-green-600/10 border-green-500/50 text-green-400 cursor-not-allowed' 
+                              : 'bg-transparent border-gray-700 hover:border-gray-500 text-gray-300'
+                            }`}
+                          >
+                            <span className="text-[11px] font-black uppercase tracking-widest">{isInCompare(product.id) ? 'เพิ่มแล้ว' : '+ เปรียบเทียบ'}</span>
+                            <Plus className={`w-4 h-4 group-hover/comp:rotate-90 transition-transform ${isInCompare(product.id) ? 'hidden' : ''}`} />
+                          </button>
+
+                          {/* Fav Button Container */}
+                          <div onClick={(e) => e.stopPropagation()} className="flex items-center">
+                            <FavButton productId={product.id} />
+                          </div>
+                      </div>
+                   </div>
                 </div>
               </div>
-            )))}
+            ))
+)}
         </div>
       </div>
 

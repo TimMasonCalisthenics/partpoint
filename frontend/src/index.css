@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
+body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: f3f4f6;
-}
+    background-color: #0a0a0a;
+    color: #ffffff;
+    margin: 0;
+}
