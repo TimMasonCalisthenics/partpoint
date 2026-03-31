@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import AdminLayout from '../../layouts/AdminLayout';
+import { API_BASE_URL } from '../../config';
 import { Search, Plus, Edit, Trash2, X, Image as ImageIcon, RefreshCw, Box, Save, ChevronDown, Package } from 'lucide-react';
 
 const mockProducts = [
@@ -340,6 +341,9 @@ export default function AdminProducts() {
         if (res.ok) {
           const data = await res.json();
           uploadedUrls.push(data.url);
+        } else {
+          const errorText = await res.text();
+          console.error('Upload failed:', res.status, errorText);
         }
       } catch (err) {
         console.error('Upload failed:', err);
