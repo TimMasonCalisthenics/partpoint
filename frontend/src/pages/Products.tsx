@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
 import CompareBar from '../components/CompareBar';
@@ -375,7 +375,7 @@ export default function ProductsPage() {
   const [selectedFunctions, setSelectedFunctions] = useState<string[]>([]);
   const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
-
+  const location = useLocation();
   const { addToCompare, isInCompare } = useCompare();
 
   useEffect(() => {
@@ -396,7 +396,7 @@ export default function ProductsPage() {
             subcategory: product.subcategory || '',
             function: product.function || '',
             name: product.name || '',
-            brandName: product.brand || '',
+            brandName: product.brand ? product.brand.replace(/,/g, '').trim() : '',
             description: product.description || '',
             price: product.basePrice?.toString() || '0',
             source: product.affiliateLink || '',
@@ -418,7 +418,12 @@ export default function ProductsPage() {
 
     fetchProducts();
   }, []);
-
+  useEffect(() => {
+    if (location.state && location.state.selectedBrand) {
+      setSearchTerm(location.state.selectedBrand); // เอาชื่อแบรนด์ยัดใส่ช่องค้นหาเลย
+    }
+  }, [location.state]);
+  
   const allCategories = Array.from(new Set(products.map((p) => p.category)));
   const allSubcategories = Array.from(
     new Set(products.map((p) => p.subcategory).filter((s): s is string => Boolean(s)))
