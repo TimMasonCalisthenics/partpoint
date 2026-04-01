@@ -29,19 +29,19 @@ func (h *DashboardHandler) GetStats(c *gin.Context) {
 	var stats DashboardStats
 
 	// 1. Total Products
-	h.db.Model(&product.PartProduct{}).Count(&stats.TotalProducts)
-
+	h.db.Debug().Model(&product.PartProduct{}).Count(&stats.TotalProducts)
+ 
 	// 2. Total Users
-	h.db.Model(&auth.User{}).Count(&stats.TotalUsers)
-
+	h.db.Debug().Model(&auth.User{}).Count(&stats.TotalUsers)
+ 
 	// 3. Low Stock Count (Stock < 10)
-	h.db.Model(&product.PartProduct{}).Where("stock < ?", 10).Count(&stats.LowStockCount)
-
-	// 4. Recent Products (Last 5)
-	h.db.Order("created_at desc").Limit(5).Find(&stats.RecentProducts)
-
+	h.db.Debug().Model(&product.PartProduct{}).Where("stock < ?", 10).Count(&stats.LowStockCount)
+ 
+	// 4. Recent Products (Last 5) - Use ID desc as fallback since CreatedAt might be null for old rows
+	h.db.Debug().Order("id desc").Limit(5).Find(&stats.RecentProducts)
+ 
 	// 5. Low Stock Items (Last 5)
-	h.db.Where("stock < ?", 10).Order("stock asc").Limit(5).Find(&stats.LowStockItems)
+	h.db.Debug().Where("stock < ?", 10).Order("stock asc").Limit(5).Find(&stats.LowStockItems)
 
 	c.JSON(http.StatusOK, stats)
 }

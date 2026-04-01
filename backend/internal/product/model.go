@@ -1,5 +1,9 @@
 package product
 
+import (
+	"time"
+)
+
 func (PartProduct) TableName() string {
 	return "part_products"
 }
@@ -9,21 +13,23 @@ func (PriceListing) TableName() string {
 }
 
 type PartProduct struct {
-	ID             int     `json:"id" gorm:"primaryKey;column:id"`
-	SKU            string  `json:"sku" gorm:"column:sku"`
-	Name           string  `json:"name" gorm:"column:name"`
-	Brand          string  `json:"brand" gorm:"column:brand"`
-	Description    string  `json:"description" gorm:"column:description"`
-	ImageURL       string  `json:"imageURL" gorm:"column:imageURL"`
-	ExtraImages    string  `json:"extraImages" gorm:"column:extraImages;type:jsonb;default:'[]'"`
-	Specifications string  `json:"specifications" gorm:"column:specifications;type:jsonb"`
-	Tags           string  `json:"tags" gorm:"column:tags;type:jsonb"`
-	BasePrice      float64 `json:"basePrice" gorm:"column:basePrice"`
-	PromoPrice     float64 `json:"promoPrice" gorm:"column:promoPrice"`
-	Stock          int     `json:"stock" gorm:"column:stock"`
-	AffiliateLink  string  `json:"affiliateLink" gorm:"column:affiliateLink"`
-	CategoryID     int     `json:"categoryId" gorm:"column:categoryId"`
-	VehicleID      int     `json:"vehicleId" gorm:"column:vehicleId"`
+	ID             int       `json:"id" gorm:"primaryKey;column:id"`
+	SKU            string    `json:"sku" gorm:"column:sku"`
+	Name           string    `json:"name" gorm:"column:name"`
+	Brand          string    `json:"brand" gorm:"column:brand"`
+	Description    string    `json:"description" gorm:"column:description"`
+	ImageURL       string    `json:"imageURL" gorm:"column:imageURL"`
+	ExtraImages    string    `json:"extraImages" gorm:"column:extraImages;type:jsonb;default:'[]'"`
+	Specifications string    `json:"specifications" gorm:"column:specifications;type:jsonb"`
+	Tags           string    `json:"tags" gorm:"column:tags;type:jsonb"`
+	BasePrice      float64   `json:"basePrice" gorm:"column:basePrice"`
+	PromoPrice     float64   `json:"promoPrice" gorm:"column:promoPrice"`
+	Stock          int       `json:"stock" gorm:"column:stock"`
+	AffiliateLink  string    `json:"affiliateLink" gorm:"column:affiliateLink"`
+	CategoryID     int       `json:"categoryId" gorm:"column:categoryId"`
+	VehicleID      int       `json:"vehicleId" gorm:"column:vehicleId"`
+	CreatedAt      time.Time `json:"createdAt" gorm:"autoCreateTime"`
+	UpdatedAt      time.Time `json:"updatedAt" gorm:"autoUpdateTime"`
 }
 
 type ProductResponse struct {

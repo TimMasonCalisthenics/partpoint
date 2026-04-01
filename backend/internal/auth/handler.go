@@ -96,16 +96,16 @@ func (h *UserHandler) Login(c *gin.Context) {
 		return
 	}
 
-	// ส่ง cookie HttpOnly พร้อม SameSite=None เพื่อให้ browser ส่ง cookie ข้าม origin ได้เมื่อใช้ fetch credentials include
+	// ส่ง cookie HttpOnly พร้อม SameSite=Lax (เหมาะสำหรับ proxy บน localhost)
 	http.SetCookie(c.Writer, &http.Cookie{
 		Name:     "token",
 		Value:    tokenString,
 		MaxAge:   3600 * 24,
 		Path:     "/",
 		Domain:   "",
-		Secure:   false,
+		Secure:   false, // ต้องเป็น false ถ้าไม่ได้ใช้ https
 		HttpOnly: true,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Normalize role to lowercase before sending
@@ -128,7 +128,7 @@ func (h *UserHandler) Logout(c *gin.Context) {
 		Domain:   "",
 		Secure:   false,
 		HttpOnly: true,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	c.JSON(http.StatusOK, gin.H{
