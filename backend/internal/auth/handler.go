@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -106,6 +107,9 @@ func (h *UserHandler) Login(c *gin.Context) {
 		HttpOnly: true,
 		SameSite: http.SameSiteNoneMode,
 	})
+
+	// Normalize role to lowercase before sending
+	user.Role = strings.ToLower(user.Role)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "login success",

@@ -26,9 +26,10 @@ export default function ProtectedRoute({
   }
 
   // เป็นแอดมินหรือเปล่า? (สำหรับเส้นทางผู้ดูแล)
-  if (adminOnly && user.role !== 'admin') {
+  if (adminOnly && user.role?.toLowerCase() !== 'admin') {
     return <Navigate to="/" replace />;
   }
+
 
   // ผ่านรอดหมด ก็ให้โชว์หน้าจอปกติตาม Children
   return children;

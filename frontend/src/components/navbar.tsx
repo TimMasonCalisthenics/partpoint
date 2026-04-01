@@ -57,16 +57,24 @@ export default function Navbar() {
                   <span className="font-bold text-sm hidden md:block">{user.username}</span>
                 </div>
 
-                {/* ปุ่มไปหน้าแอดมิน (ถ้าเป็น Admin) */}
-                {user.role === 'admin' ? (
-                  <Link to="/admin/products" className="text-xs bg-red-600/20 text-red-500 border border-red-500/30 px-2 py-1 rounded hover:bg-red-600 hover:text-white transition">
-                    ระบบหลังบ้าน
+                {/* ปุ่มไปหน้าแอดมิน หรือ บัญชีผู้ใช้ */}
+                {user.role?.toLowerCase() === 'admin' ? (
+                  <Link 
+                    to="/admin/dashboard" 
+                    className="text-xs bg-red-600 text-white border border-red-500 px-3 py-1.5 rounded-full hover:bg-white hover:text-red-600 transition-all font-bold shadow-lg shadow-red-600/20"
+                  >
+                    หน้าควบคุม
                   </Link>
+
                 ) : (
-                  <Link to="/dashboard" className="text-xs bg-red-600/20 text-red-500 border border-red-500/30 px-2 py-1 rounded hover:bg-red-600 hover:text-white transition">
+                  <Link 
+                    to="/dashboard" 
+                    className="text-xs bg-red-600/20 text-red-500 border border-red-500/30 px-3 py-1.5 rounded-full hover:bg-red-600 hover:text-white transition-all font-bold"
+                  >
                     บัญชีของฉัน
                   </Link>
                 )}
+
 
                 {/* ปุ่มออกจากระบบ */}
                 <button 

@@ -3,6 +3,7 @@ package user
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -34,6 +35,18 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
+
+	// If role is empty in DB, fall back to the role stored in JWT (set by auth middleware)
+	if user.Role == "" {
+		if roleRaw, roleExists := c.Get("role"); roleExists {
+			if roleStr, ok := roleRaw.(string); ok {
+				user.Role = roleStr
+			}
+		}
+	}
+
+	// Normalize role to lowercase so frontend always gets 'admin' consistently
+	user.Role = strings.ToLower(user.Role)
 
 	c.JSON(http.StatusOK, user)
 }

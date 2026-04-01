@@ -5,10 +5,12 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
+
 
 var jwtSecret []byte
 
@@ -66,9 +68,9 @@ func AuthMiddleware() gin.HandlerFunc {
 		// set ให้ handler ใช้
 		c.Set("userID", userID)
 
-		// (optional) ถ้ามี role ในอนาคต
+		// (optional) ถ้ามี role ใน JWT
 		if role, ok := claims["role"].(string); ok {
-			c.Set("role", role)
+			c.Set("role", strings.ToLower(role)) // normalize to lowercase
 		}
 
 		c.Next()
@@ -87,7 +89,9 @@ func AdminMiddleware() gin.HandlerFunc {
 		log.Println("ROLE FROM TOKEN:", role)
 		log.Printf("TYPE: %T\n", role)
 
-		if !exists || role != "admin" {
+		// Case-insensitive check
+		roleStr, _ := role.(string)
+		if !exists || strings.ToLower(roleStr) != "admin" {
 			c.JSON(http.StatusForbidden, gin.H{"error": "admin access required"})
 			c.Abort()
 			return

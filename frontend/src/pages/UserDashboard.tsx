@@ -232,12 +232,19 @@ export default function UserDashboard() {
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-4">
                <button 
-                 onClick={() => navigate(-1)}
+                 onClick={() => {
+                   if (user?.role === 'admin') {
+                     navigate('/admin/dashboard');
+                   } else {
+                     navigate(-1);
+                   }
+                 }}
                  className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-white transition-colors group w-fit"
                >
                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                  <span>ย้อนกลับ</span>
                </button>
+
                <div>
                  <h1 className="text-5xl font-black text-white italic uppercase tracking-tighter mb-1">
                    {activeTab === 'favorites' ? 'MY FAVORITES' : activeTab === 'profile' ? 'PROFILE' : 'SECURITY'}

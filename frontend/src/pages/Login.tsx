@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
 import { User, Lock, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -10,10 +11,22 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { login } = useAuth();
+  const { user, login } = useAuth();
   const navigate = useNavigate();
 
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      if (user.role?.toLowerCase() === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/');
+      }
+    }
+  }, [user, navigate]);
+
   const handleLogin = async (e: React.FormEvent) => {
+
     e.preventDefault();
     if (!identifier || !password) {
       setErrorMsg('กรุณากรอกข้อมูลให้ครบถ้วน');
@@ -37,12 +50,13 @@ export default function LoginPage() {
 
       if (res.ok) {
         login(data.user);
-        // เช็คว่าถ้าเป็นแอดมิน ให้ไปหน้าแอดมิน ถ้าเป็น user ให้ไปหน้าแรก
-        if (data.user?.role === 'admin') {
-          navigate('/admin/products');
+        // admin → หน้าควบคุม, user ปกติ → หน้าหลัก
+        if (data.user?.role?.toLowerCase() === 'admin') {
+          navigate('/admin/dashboard');
         } else {
           navigate('/');
         }
+
       } else {
         setErrorMsg(data.error || 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง');
       }
