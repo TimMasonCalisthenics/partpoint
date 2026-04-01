@@ -177,47 +177,66 @@ export default function HomePage() {
 
       <div className="w-full h-1 bg-red-600"></div>
 
-      {/* ================== SEARCH PART SECTION (NEW DESIGN) ================== */}
-      <section className="relative w-full flex justify-center items-center py-20 px-4 md:px-0 overflow-hidden" style={{ minHeight: '480px' }}>
+      {/* ================== SEARCH PART SECTION (NEW DESIGN - SLIDER) ================== */}
+      <section className="relative w-full flex justify-center items-center py-20 overflow-hidden" style={{ minHeight: '480px' }}>
         {/* BG image */}
         <img src="/CarPart/BG_Search_menu.png" alt="พื้นหลังหมวดหมู่" className="absolute inset-0 w-full h-full object-cover z-0" style={{ filter: 'brightness(0.2)' }} />
         
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-0"></div>
         
+        {/* Style สำหรับซ่อน Scrollbar แต่ยังเลื่อนได้ */}
+        <style>{`
+          .hide-scrollbar::-webkit-scrollbar { display: none; }
+          .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        `}</style>
+        
         {/* Content */}
-        <div className="relative z-10 w-full max-w-5xl flex flex-col items-center">
-          <div className="text-center mb-12">
+        <div className="relative z-10 w-full flex flex-col items-center">
+          <div className="text-center mb-12 px-4">
             <h2 className="text-3xl md:text-5xl font-black text-white tracking-wider mb-4 uppercase">
               ค้นหาอะไหล่<span className="text-red-600">ด่วน</span>
             </h2>
-            <p className="text-gray-400 text-lg md:text-xl">เลือกหมวดหมู่ที่ต้องการ แล้วเริ่มค้นหาความแรงได้ทันที</p>
+            <p className="text-gray-400 text-lg md:text-xl">ปัดซ้าย-ขวา เพื่อเลือกหมวดหมู่ที่คุณต้องการ</p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full">
-            {/* หมวดหมู่ 1 */}
-            <Link to="/products" className="bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl">
-              <Disc className="w-12 h-12 text-red-600 group-hover:scale-125 transition-transform duration-300" />
-              <span className="text-white font-bold text-lg group-hover:text-red-500">ล้อและยาง</span>
-            </Link>
+          {/* ============ Container สไลด์เลื่อนแนวนอน ============ */}
+          <div className="w-full max-w-[1400px] px-4 md:px-12">
+            <div className="flex overflow-x-auto gap-4 md:gap-6 pb-8 snap-x snap-mandatory hide-scrollbar">
+              
+              {/* หมวดหมู่ 1 */}
+              <Link to="/products" className="min-w-[160px] md:min-w-[240px] flex-shrink-0 snap-center bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl cursor-pointer">
+                <Disc className="w-12 h-12 text-red-600 group-hover:scale-125 transition-transform duration-300" />
+                <span className="text-white font-bold text-lg group-hover:text-red-500 text-center">ล้อและยาง</span>
+              </Link>
 
-            {/* หมวดหมู่ 2 */}
-            <Link to="/products" className="bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl">
-              <Droplet className="w-12 h-12 text-red-600 group-hover:scale-125 transition-transform duration-300" />
-              <span className="text-white font-bold text-lg group-hover:text-red-500">น้ำมันเครื่อง</span>
-            </Link>
+              {/* หมวดหมู่ 2 */}
+              <Link to="/products" className="min-w-[160px] md:min-w-[240px] flex-shrink-0 snap-center bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl cursor-pointer">
+                <Droplet className="w-12 h-12 text-red-600 group-hover:scale-125 transition-transform duration-300" />
+                <span className="text-white font-bold text-lg group-hover:text-red-500 text-center">น้ำมันเครื่อง</span>
+              </Link>
 
-            {/* หมวดหมู่ 3 */}
-            <Link to="/products" className="bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl">
-              <Settings className="w-12 h-12 text-red-600 group-hover:scale-125 transition-transform duration-300" />
-              <span className="text-white font-bold text-lg group-hover:text-red-500">โช้คอัพ / เบรก</span>
-            </Link>
+              {/* หมวดหมู่ 3 */}
+              <Link to="/products" className="min-w-[160px] md:min-w-[240px] flex-shrink-0 snap-center bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl cursor-pointer">
+                <Settings className="w-12 h-12 text-red-600 group-hover:scale-125 transition-transform duration-300" />
+                <span className="text-white font-bold text-lg group-hover:text-red-500 text-center">โช้คอัพ / เบรก</span>
+              </Link>
 
-            {/* หมวดหมู่ 4 */}
-            <Link to="/products" className="bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl">
-              <Zap className="w-12 h-12 text-red-600 group-hover:scale-125 transition-transform duration-300" />
-              <span className="text-white font-bold text-lg group-hover:text-red-500">แบตเตอรี่</span>
-            </Link>
+              {/* หมวดหมู่ 4 */}
+              <Link to="/products" className="min-w-[160px] md:min-w-[240px] flex-shrink-0 snap-center bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl cursor-pointer">
+                <Zap className="w-12 h-12 text-red-600 group-hover:scale-125 transition-transform duration-300" />
+                <span className="text-white font-bold text-lg group-hover:text-red-500 text-center">แบตเตอรี่</span>
+              </Link>
+
+              {/* ================= ตัวอย่างการเพิ่มหมวดหมู่ใหม่ ================= */}
+              {/* ถ้ามีหมวดหมู่ใหม่ ก็แค่ก๊อปปี้บล็อกนี้ไปวางต่อท้ายได้เรื่อยๆ เลยครับ */}
+              <Link to="/products" className="min-w-[160px] md:min-w-[240px] flex-shrink-0 snap-center bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl cursor-pointer">
+                <Settings className="w-12 h-12 text-red-600 group-hover:scale-125 transition-transform duration-300" />
+                <span className="text-white font-bold text-lg group-hover:text-red-500 text-center">ชิ้นส่วนเครื่องยนต์</span>
+              </Link>
+              {/* ========================================================= */}
+
+            </div>
           </div>
         </div>
       </section>
