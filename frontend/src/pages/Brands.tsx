@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
 import { Car, ChevronRight, ExternalLink, ChevronLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 // --- Mock Data ---
 const carBrands = [
@@ -95,10 +96,11 @@ const oilBrands = [
 const BrandCategoryRow = ({ title, icon: Icon, iconImg, brands }: any) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const navigate = useNavigate(); // ดึง navigate มาใช้งาน
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
-      const scrollAmount = window.innerWidth < 768 ? 240 : 400; // Scroll distance depending on mobile/desktop
+      const scrollAmount = window.innerWidth < 768 ? 240 : 400; 
       scrollRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth'
@@ -111,7 +113,6 @@ const BrandCategoryRow = ({ title, icon: Icon, iconImg, brands }: any) => {
     const maxScroll = el.scrollWidth - el.clientWidth;
     if (maxScroll <= 0) return;
     
-    // เราสร้างจุดล่างแค่ 3 จุด (หน้าแรก, ตรงกลาง, ท้ายสุด)
     const scrolledPercentage = el.scrollLeft / maxScroll;
     const currentDotIndex = Math.round(scrolledPercentage * 2); 
     setActiveIndex(currentDotIndex);
@@ -165,6 +166,7 @@ const BrandCategoryRow = ({ title, icon: Icon, iconImg, brands }: any) => {
           {brands.map((brand: any, idx: number) => (
             <div 
                 key={idx} 
+                onClick={() => navigate('/products', { state: { selectedBrand: brand.name } })} 
                 className={`flex-none w-48 md:w-64 h-32 md:h-40 relative bg-[#121212] rounded-xl overflow-hidden group/card snap-start cursor-pointer transition-all border border-solid ${brand.link ? 'border-transparent hover:border-red-600' : 'border-transparent hover:border-gray-500'}`}
             >
               {/* Background Image */}
