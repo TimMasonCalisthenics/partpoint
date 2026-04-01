@@ -384,25 +384,27 @@ export default function ProductsPage() {
         }
 
         const data = await res.json();
-        const mappedProducts = (data as BackendProduct[]).map((product) => ({
-          id: product.id,
-          sku: product.sku || '',
-          category: getCategoryName(product.categoryId),
-          subcategory: product.subcategory || '',
-          function: product.function || '',
-          name: product.name || '',
-          brandName: product.brand || '',
-          description: product.description || '',
-          price: product.basePrice?.toString() || '0',
-          source: product.affiliateLink || '',
-          imageUrl: product.imageURL || '',
-          basePrice: product.basePrice ?? 0,
-          promoPrice: product.promoPrice ?? 0,
-          stock: product.stock ?? 0,
-          affiliateLink: product.affiliateLink || '',
-          specifications: product.specifications || '[]',
-          tags: product.tags || '[]'
-        }));
+        const mappedProducts = (data as BackendProduct[])
+          .filter((p) => p.name && p.name.trim() !== '') // Filter out empty products
+          .map((product) => ({
+            id: product.id,
+            sku: product.sku || '',
+            category: getCategoryName(product.categoryId),
+            subcategory: product.subcategory || '',
+            function: product.function || '',
+            name: product.name || '',
+            brandName: product.brand || '',
+            description: product.description || '',
+            price: product.basePrice?.toString() || '0',
+            source: product.affiliateLink || '',
+            imageUrl: product.imageURL || '',
+            basePrice: product.basePrice ?? 0,
+            promoPrice: product.promoPrice ?? 0,
+            stock: product.stock ?? 0,
+            affiliateLink: product.affiliateLink || '',
+            specifications: product.specifications || '[]',
+            tags: product.tags || '[]'
+          }));
 
         setProducts(mappedProducts);
       } catch (error) {

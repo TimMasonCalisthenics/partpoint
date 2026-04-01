@@ -1,4 +1,4 @@
-package check_tables
+package main
 
 
 import (
@@ -45,5 +45,16 @@ func main() {
 	fmt.Println("Existing Tables:")
 	for _, t := range tables {
 		fmt.Println("-", t)
+	}
+
+	fmt.Println("\nChecking Products Data:")
+	type Product struct {
+		ID   int
+		Name string
+	}
+	var products []Product
+	db.Table("part_products").Select("id, name").Order("id asc").Scan(&products)
+	for _, p := range products {
+		fmt.Printf("ID: %d, Name: [%s]\n", p.ID, p.Name)
 	}
 }
