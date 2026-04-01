@@ -4,11 +4,9 @@ func (PartProduct) TableName() string {
 	return "part_products"
 }
 
-
 func (PriceListing) TableName() string {
 	return "price_listings"
 }
-
 
 type PartProduct struct {
 	ID             int     `json:"id" gorm:"primaryKey;column:id"`
@@ -53,4 +51,3 @@ type Store struct {
 func (Store) TableName() string {
 	return "stores"
 }
-
