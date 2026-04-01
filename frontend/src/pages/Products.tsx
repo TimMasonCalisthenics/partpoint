@@ -654,7 +654,7 @@ export default function ProductsPage() {
 
               {/* รายการเมนูที่จะคลี่ออกมา (มี max-h-60 และ overflow-y-auto ทำให้เลื่อนได้) */}
               {isCategoryDropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-full bg-[#1a1a1a] border border-gray-700 rounded-md shadow-2xl z-50 max-h-60 overflow-y-auto custom-scrollbar">
+                <div className="absolute top-full left-0 mt-2 w-full bg-[#1a1a1a] border border-gray-700 rounded-md shadow-2xl z-[1000] max-h-60 overflow-y-auto custom-scrollbar">
                   {[
                     { value: '', label: 'หมวดหมู่อะไหล่ทั้งหมด' },
                     { value: 'tire', label: 'ยางรถยนต์' },
@@ -688,7 +688,7 @@ export default function ProductsPage() {
 
         {/* Filter Popup */}
         {isFilterPopupOpen && (
-          <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/70 z-[1000] flex items-center justify-center p-4">
             <div className="w-full max-w-lg bg-[#121212] border border-gray-800 rounded-xl p-5">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-white font-bold text-lg">ตัวกรองสินค้า</h3>
@@ -925,8 +925,8 @@ export default function ProductsPage() {
                       </div>
                    </div>
                 </div>
-                {/* Fav Button Container - ensuring it's on top of everything inside the card */}
-                <div className="absolute top-4 right-4 z-[100]">
+                {/* Fav Button Container - Hidden by default, shows on card hover */}
+                <div className="absolute top-4 right-4 z-20 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
                     <FavButton productId={product.id} />
                 </div>
               </div>
