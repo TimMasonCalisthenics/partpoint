@@ -57,4 +57,15 @@ func main() {
 	for _, p := range products {
 		fmt.Printf("ID: %d, Name: [%s]\n", p.ID, p.Name)
 	}
+
+	fmt.Println("\nDescribing Table: favorites")
+	type ColumnInfo struct {
+		ColumnName string `gorm:"column:column_name"`
+		DataType   string `gorm:"column:data_type"`
+	}
+	var columns []ColumnInfo
+	db.Raw("SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'favorites'").Scan(&columns)
+	for _, col := range columns {
+		fmt.Printf("Column: %s, Type: %s\n", col.ColumnName, col.DataType)
+	}
 }

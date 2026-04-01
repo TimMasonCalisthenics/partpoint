@@ -805,6 +805,7 @@ export default function ProductsPage() {
             filteredProducts.map((product) => (
               <div key={product.id} className="bg-[#121212] border border-gray-800 hover:border-red-600/50 rounded-xl overflow-hidden flex flex-col shadow-2xl transition-all duration-300 group/card relative">
                 
+                
                 {/* Clickable Area: Image & Top Info */}
                 <Link to={`/product/${product.id}`} className="flex flex-col flex-grow">
                   {/* Product Image (White Background Area) */}
@@ -916,12 +917,12 @@ export default function ProductsPage() {
                             <Plus className={`w-4 h-4 group-hover/comp:rotate-90 transition-transform ${isInCompare(product.id) ? 'hidden' : ''}`} />
                           </button>
 
-                          {/* Fav Button Container */}
-                          <div onClick={(e) => e.stopPropagation()} className="flex items-center">
-                            <FavButton productId={product.id} />
-                          </div>
                       </div>
                    </div>
+                </div>
+                {/* Fav Button Container - ensuring it's on top of everything inside the card */}
+                <div className="absolute top-4 right-4 z-[100]">
+                    <FavButton productId={product.id} />
                 </div>
               </div>
             ))

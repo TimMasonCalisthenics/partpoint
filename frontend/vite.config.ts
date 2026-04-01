@@ -22,6 +22,8 @@ export default defineConfig({
       '/stores': { target: 'http://localhost:8080', changeOrigin: true },
       '/users': { target: 'http://localhost:8080', changeOrigin: true },
       '/favourites': { target: 'http://localhost:8080', changeOrigin: true },
+      '/fav': { target: 'http://localhost:8080', changeOrigin: true },
+      '/profile': { target: 'http://localhost:8080', changeOrigin: true },
       '/upload': { target: 'http://localhost:8080', changeOrigin: true },
       '/uploads': { target: 'http://localhost:8080', changeOrigin: true },
       '/prices': { target: 'http://localhost:8080', changeOrigin: true },
