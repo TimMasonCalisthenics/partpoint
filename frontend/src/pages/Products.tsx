@@ -356,7 +356,9 @@ const categoryMap: Record<string, number> = {
   oil: 3,
   shock: 4,
   brake: 5,
-  battery: 6
+  battery: 6,
+  enginepart_replacement: 7,
+  performance_upgrade: 8,
 };
 
 const getCategoryName = (id: number) => {
@@ -372,6 +374,7 @@ export default function ProductsPage() {
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedFunctions, setSelectedFunctions] = useState<string[]>([]);
   const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
   const { addToCompare, isInCompare } = useCompare();
 
@@ -512,6 +515,7 @@ export default function ProductsPage() {
                 </label>
               ))}
             </div>
+          
 
             <div className="space-y-2">
               <h4 className="text-gray-300 text-sm font-semibold">ย่อยหมวดหมู่</h4>
@@ -612,23 +616,67 @@ export default function ProductsPage() {
             </div>
 
             {/* Dropdown category filter */}
+            {/* Dropdown category filter (Custom แบบมี Scrollbar เลื่อนขึ้นลงได้) */}
             <div className="relative w-full md:w-[300px]">
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="w-full appearance-none bg-[#1a1a1a] text-gray-300 border border-gray-700 rounded-md py-3 px-4 pr-10 focus:outline-none focus:border-red-600"
+              {/* CSS สำหรับแต่ง Scrollbar ให้เข้ากับธีมดำ-แดง */}
+              <style>{`
+                .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 4px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #dc2626; }
+              `}</style>
+
+              {/* ปุ่มกดเปิด/ปิด Dropdown */}
+              <div
+                onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+                className="w-full flex justify-between items-center bg-[#1a1a1a] text-gray-300 border border-gray-700 rounded-md py-3 px-4 cursor-pointer hover:border-red-600 transition-colors"
               >
-                <option value="">หมวดหมู่อะไหล่</option>
-                <option value="tire">ยางรถยนต์</option>
-                <option value="oil">น้ำมันเครื่อง</option>
-                <option value="shock">โช้คอัพ</option>
-                <option value="brake">เบรก</option>
-                <option value="battery">แบตเตอรี่</option>
-                <option value="wheel">แม็ก</option>
-              </select>
-              <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 text-red-600 w-5 h-5 pointer-events-none" />
+                <span className="truncate">
+                  {categoryFilter === '' ? 'หมวดหมู่อะไหล่ทั้งหมด' : 
+                   categoryFilter === 'tire' ? 'ยางรถยนต์' :
+                   categoryFilter === 'oil' ? 'น้ำมันเครื่อง' :
+                   categoryFilter === 'shock' ? 'โช้คอัพ' :
+                   categoryFilter === 'brake' ? 'เบรก' :
+                   categoryFilter === 'battery' ? 'แบตเตอรี่' :
+                   categoryFilter === 'wheel' ? 'แม็ก' :
+                   categoryFilter === 'enginepart_replacement' ? 'ชิ้นส่วนเครื่องยนต์' :
+                   categoryFilter === 'performance_upgrade' ? 'อะไหล่เสริมพละกำลังรถ' : 'หมวดหมู่อะไหล่'}
+                </span>
+                <ChevronDown className={`text-red-600 w-5 h-5 flex-shrink-0 transition-transform duration-300 ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} />
+              </div>
+
+              {/* รายการเมนูที่จะคลี่ออกมา (มี max-h-60 และ overflow-y-auto ทำให้เลื่อนได้) */}
+              {isCategoryDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-full bg-[#1a1a1a] border border-gray-700 rounded-md shadow-2xl z-50 max-h-60 overflow-y-auto custom-scrollbar">
+                  {[
+                    { value: '', label: 'หมวดหมู่อะไหล่ทั้งหมด' },
+                    { value: 'tire', label: 'ยางรถยนต์' },
+                    { value: 'oil', label: 'น้ำมันเครื่อง' },
+                    { value: 'shock', label: 'โช้คอัพ' },
+                    { value: 'brake', label: 'เบรก' },
+                    { value: 'battery', label: 'แบตเตอรี่' },
+                    { value: 'wheel', label: 'แม็ก' },
+                    { value: 'enginepart_replacement', label: 'ชิ้นส่วนเครื่องยนต์' },
+                    { value: 'performance_upgrade', label: 'อะไหล่เสริมพละกำลังรถ' }
+                  ].map((option) => (
+                    <div
+                      key={option.value}
+                      onClick={() => {
+                        setCategoryFilter(option.value);
+                        setIsCategoryDropdownOpen(false); // เลือกเสร็จปุ๊บ ปิดเมนูทันที
+                      }}
+                      className={`px-4 py-3 cursor-pointer transition-colors ${
+                        categoryFilter === option.value
+                          ? 'bg-red-600 text-white font-bold' // ไฮไลท์สีแดงถ้ากำลังเลือกอันนี้อยู่
+                          : 'text-gray-300 hover:bg-gray-800 hover:text-red-500'
+                      }`}
+                    >
+                      {option.label}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
         </div>
 
         {/* Filter Popup */}
@@ -878,6 +926,7 @@ export default function ProductsPage() {
 )}
         </div>
       </div>
+    </div>
 
       <CompareBar />
       <Footer />
