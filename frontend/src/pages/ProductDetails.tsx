@@ -400,7 +400,21 @@ export default function ProductDetailsPage() {
               <button 
                 onClick={() => {
                   if (!isInCompare(product.id)) {
-                    addToCompare(product);
+                    addToCompare({
+                      id: product.id,
+                      sku: product.sku || '',
+                      name: product.name,
+                      brand: product.brand,
+                      description: product.description,
+                      imageURL: product.imageURL,
+                      specifications: product.specifications || '[]',
+                      tags: product.tags || '[]',
+                      basePrice: product.basePrice,
+                      promoPrice: product.promoPrice,
+                      stock: product.stock,
+                      affiliateLink: product.affiliateLink,
+                      category: product.categoryId
+                    });
                   }
                 }}
                 className={`border font-bold rounded-xl px-5 py-4 flex items-center gap-2 transition-all hover:-translate-y-0.5 ${

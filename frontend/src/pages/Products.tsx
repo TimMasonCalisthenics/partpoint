@@ -436,7 +436,8 @@ export default function ProductsPage() {
       basePrice: (product.basePrice ?? Number(product.price.replace(/,/g, ''))) || 0,
       promoPrice: product.promoPrice ?? 0,
       stock: product.stock ?? 0,
-      affiliateLink: product.affiliateLink || ''
+      affiliateLink: product.affiliateLink || '',
+      category: product.category
     });
   };
 
