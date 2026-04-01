@@ -35,27 +35,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuthStatus();
   }, []);
 
-  const checkAuthStatus = async () => {
+const checkAuthStatus = async () => {
     try {
-      // โหลดข้อมูล Profile จาก Backend ทันทีที่เข้าแอป (แนบ cookie อัตโนมัติด้วย credentials)
+      // 1. ลองดึงจาก localStorage ก่อนเลย (เพื่อความชัวร์และไว)
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
+
+      // 2. ดึงข้อมูล Profile จาก Backend เพื่อยืนยันอีกรอบ
       const res = await fetch(`${API_BASE_URL}/profile`, {
         credentials: 'include',
       });
+      
       if (res.ok) {
         const data = await res.json();
         setUser(data);
+        localStorage.setItem('user', JSON.stringify(data)); // อัปเดต localStorage ให้ตรงกัน
       } else {
+        // ถ้า Backend บอกว่าไม่ผ่าน ให้เคลียร์ทิ้ง
         setUser(null);
+        localStorage.removeItem('user');
       }
     } catch (err) {
       console.error('Error checking auth:', err);
-      setUser(null);
     } finally {
       setLoading(false);
     }
   };
 
   const login = (userData: User) => {
+    // เซฟลง localStorage ตอนล็อกอินสำเร็จ
+    localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
   };
 
@@ -69,6 +80,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (err) {
       console.error('Logout error:', err);
     }
+    // เคลียร์ค่าทั้งหมดตอนกดออก
+    localStorage.removeItem('user');
     setUser(null);
   };
 
