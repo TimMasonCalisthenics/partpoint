@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import Navbar from '../components/navbar';
 import { ArrowLeft, ArrowRight, Settings, Disc, Droplet, Zap } from 'lucide-react';
 import ProductCard from '../components/productcard';
@@ -5,12 +6,36 @@ import Footer from '../components/footer';
 import { Link } from 'react-router-dom';
 
 export default function HomePage() {
-  const mockProducts = [
-    { id: 1, name: 'YOKOHAMA Geolandar CV G058 265/60R18', price: 6137, imageUrl: 'http://localhost:8080/uploads/product_1774988948225.png', tags: ['NEW', 'SOFT', 'SUV'] },
-    { id: 2, name: 'MIC 265/60R18 110H PRIMACY SUV+ MI', price: 8950, imageUrl: 'http://localhost:8080/uploads/product_1775004974288.png', tags: ['NEW', 'SUV', 'SOFT'] },
-    { id: 3, name: '265/60R18 ECOPIA EP H/L 001', price: 7750, imageUrl: 'http://localhost:8080/uploads/product_1775005410532.png', tags: ['NEW', 'ECO', 'DURABLE'] },
-    { id: 4, name: 'ล้อแม็กซ์18 M-IFS 5x114', price: 13900, imageUrl: 'http://localhost:8080/uploads/product_1775007398924.png', tags: ['NEW', 'SOFT'] },
-  ];
+  const [latestProducts, setLatestProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLatestProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/products');
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+        
+        // Sort by ID descending (assuming higher ID = newer) or CreatedAt
+        // And take only the first 4 for the home page
+        const sorted = data.sort((a: any, b: any) => b.id - a.id).slice(0, 4);
+        
+        // Parse tags if they are JSON strings
+        const processed = sorted.map((p: any) => ({
+          ...p,
+          tags: typeof p.tags === 'string' ? JSON.parse(p.tags || '[]') : (p.tags || [])
+        }));
+        
+        setLatestProducts(processed);
+      } catch (error) {
+        console.error('Error fetching latest products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLatestProducts();
+  }, []);
 
   const brands = [
     { name: 'Ford', src: '/logos/ford.png' },
@@ -158,16 +183,26 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
-          {mockProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              name={product.name}
-              price={product.price}
-              imageUrl={product.imageUrl}
-              tags={product.tags}
-            />
-          ))}
+          {loading ? (
+            <div className="col-span-full py-20 flex justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
+            </div>
+          ) : latestProducts.length > 0 ? (
+            latestProducts.map((product: any) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                name={product.name}
+                price={product.basePrice || product.price}
+                imageUrl={product.imageURL || product.imageUrl}
+                tags={product.tags}
+              />
+            ))
+          ) : (
+            <div className="col-span-full py-10 text-center text-gray-500">
+              ยังไม่มีสินค้าแนะนำในขณะนี้
+            </div>
+          )}
         </div>
 
         <Link to="/products" className="md:hidden mt-8 text-red-500 hover:text-red-400 font-semibold flex items-center gap-1 transition-colors">

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Package, LayoutDashboard, Users, Settings, LogOut, ExternalLink } from 'lucide-react';
+import { Package, LayoutDashboard, Users, LogOut, ExternalLink } from 'lucide-react';
 import { Logo } from './Logo';
 
 export default function AdminSidebar() {
@@ -9,7 +9,7 @@ export default function AdminSidebar() {
     { name: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
     { name: 'จัดการสินค้า', icon: Package, path: '/admin/products' },
     { name: 'ผู้ใช้งาน', icon: Users, path: '/admin/users' },
-    { name: 'ตั้งค่า', icon: Settings, path: '/admin/settings' },
+    // { name: 'ตั้งค่า', icon: Settings, path: '/admin/settings' },
   ];
 
   return (

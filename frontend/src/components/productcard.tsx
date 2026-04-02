@@ -36,22 +36,27 @@ export default function ProductCard({
           {/* Tags */}
           <div className="flex flex-wrap gap-2">
             {tags.map((tag, index) => {
-              // กำหนดสีป้ายตามคำ
-              let tagColor = "bg-gray-800 text-gray-300 border-gray-700";
               const lTag = tag.toLowerCase();
-              if (lTag === 'new') tagColor = "bg-red-900/50 text-red-400 border-red-800";
-              else if (lTag === 'sport') tagColor = "bg-blue-900/50 text-blue-400 border-blue-800";
-              else if (lTag === 'suv') tagColor = "bg-green-900/50 text-green-400 border-green-800";
-              else if (lTag === 'soft') tagColor = "bg-purple-900/50 text-purple-400 border-purple-800";
-              else if (lTag === 'eco') tagColor = "bg-emerald-900/50 text-emerald-400 border-emerald-800";
-              else if (lTag === 'best seller') tagColor = "bg-amber-900/50 text-amber-400 border-amber-800";
+              let tagStyle = "bg-blue-600 text-white border-blue-500 shadow-blue-900/20"; // Vibrant Blue default
+              
+              if (lTag === 'new') tagStyle = "bg-red-600 text-white border-red-500 shadow-red-900/20";
+              else if (lTag === 'soft' || lTag === 'comfort') tagStyle = "bg-purple-600 text-white border-purple-500 shadow-purple-900/20";
+              else if (lTag === 'suv' || lTag === '4x4') tagStyle = "bg-green-600 text-white border-green-500 shadow-green-900/20";
+              else if (lTag === 'eco' || lTag === 'diesel' || lTag === 'hybrid') tagStyle = "bg-emerald-600 text-white border-emerald-500 shadow-emerald-900/20";
+              else if (lTag === 'durable' || lTag === 'heavy duty') tagStyle = "bg-indigo-600 text-white border-indigo-500 shadow-indigo-900/20";
+              else if (lTag === 'racing' || lTag === 'high performance' || lTag === 'forged') tagStyle = "bg-orange-600 text-white border-orange-500 shadow-orange-900/20";
+              else if (lTag === 'brake' || lTag === 'safety' || lTag === 'stop') tagStyle = "bg-rose-600 text-white border-rose-500 shadow-rose-900/20";
+              else if (lTag === 'turbo' || lTag === 'engine' || lTag === 'motoroil') tagStyle = "bg-yellow-500 text-black border-yellow-400 shadow-yellow-900/20";
+              else if (lTag === 'carbon' || lTag === 'premium' || lTag === 'luxury') tagStyle = "bg-zinc-900 text-zinc-100 border-zinc-700 shadow-black";
+              else if (lTag.includes('service') || lTag.includes('maintenance')) tagStyle = "bg-cyan-600 text-white border-cyan-500 shadow-cyan-900/20";
               
               return (
                 <span 
                   key={index} 
-                  className={`text-xs font-bold px-2.5 py-1 rounded-full border ${tagColor}`}
+                  className={`text-[9px] font-black px-2.5 py-1 rounded-full border shadow-sm ${tagStyle} backdrop-blur-sm tracking-widest`}
+                  style={{ textShadow: tagStyle.includes('text-white') ? '0 1px 2px rgba(0,0,0,0.3)' : 'none' }}
                 >
-                  {tag}
+                  {tag.toUpperCase()}
                 </span>
               );
             })}

@@ -1,4 +1,4 @@
-package scripts
+package main
 
 import (
 	"fmt"
@@ -37,13 +37,16 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("🚀 Cleaning up invalid products (Name is empty or ID is 0)...")
+	fmt.Println("🚀 Wiping AI-seeded products (IDs: 1, 2, 3, 4, 6, 7, 11, 12, 21, 22, 31, 41, 42, 51, 52)...")
 
-	// Delete products with empty name or BasePrice = 0 if they look like placeholders
-	result := db.Exec("DELETE FROM part_products WHERE name = '' OR name IS NULL OR id = 0")
+	// Delete specific seeded products
+	targetIDs := []int{1, 2, 3, 4, 6, 7, 11, 12, 21, 22, 31, 41, 42, 51, 52}
+	
+	result := db.Exec("DELETE FROM part_products WHERE id IN (?)", targetIDs)
 	if result.Error != nil {
 		log.Fatal(result.Error)
 	}
 
-	fmt.Printf("✅ Deleted %d invalid rows.\n", result.RowsAffected)
+	fmt.Printf("✅ Success! Deleted %d AI-seeded products.\n", result.RowsAffected)
+	fmt.Println("-------------------------------------------")
 }

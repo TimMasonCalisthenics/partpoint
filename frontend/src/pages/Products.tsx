@@ -601,6 +601,40 @@ export default function ProductsPage() {
                       className="max-h-full max-w-full object-contain drop-shadow-2xl group-hover/card:scale-110 transition-transform duration-500" 
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
+                    
+                    {/* Tags Badge (Image 2 style) */}
+                    <div className="absolute top-4 left-4 z-20 flex flex-wrap gap-2 pointer-events-none">
+                      {(() => {
+                        try {
+                          const tagsArray = typeof product.tags === 'string' ? JSON.parse(product.tags || '[]') : (product.tags || []);
+                          return Array.isArray(tagsArray) && tagsArray.map((tag: string, index: number) => {
+                            const lTag = tag.toLowerCase();
+                            let tagStyle = "bg-blue-600 text-white border-blue-500 shadow-blue-900/20"; // Vibrant Blue as new default
+                            
+                            if (lTag === 'new') tagStyle = "bg-red-600 text-white border-red-500 shadow-red-900/20";
+                            else if (lTag === 'soft' || lTag === 'comfort') tagStyle = "bg-purple-600 text-white border-purple-500 shadow-purple-900/20";
+                            else if (lTag === 'suv' || lTag === '4x4') tagStyle = "bg-green-600 text-white border-green-500 shadow-green-900/20";
+                            else if (lTag === 'eco' || lTag === 'diesel' || lTag === 'hybrid') tagStyle = "bg-emerald-600 text-white border-emerald-500 shadow-emerald-900/20";
+                            else if (lTag === 'durable' || lTag === 'heavy duty') tagStyle = "bg-indigo-600 text-white border-indigo-500 shadow-indigo-900/20";
+                            else if (lTag === 'racing' || lTag === 'high performance' || lTag === 'forged') tagStyle = "bg-orange-600 text-white border-orange-500 shadow-orange-900/20";
+                            else if (lTag === 'brake' || lTag === 'safety' || lTag === 'stop') tagStyle = "bg-rose-600 text-white border-rose-500 shadow-rose-900/20";
+                            else if (lTag === 'turbo' || lTag === 'engine' || lTag === 'motoroil') tagStyle = "bg-yellow-500 text-black border-yellow-400 shadow-yellow-900/20";
+                            else if (lTag === 'carbon' || lTag === 'premium' || lTag === 'luxury') tagStyle = "bg-zinc-900 text-zinc-100 border-zinc-700 shadow-black";
+                            else if (lTag.includes('service') || lTag.includes('maintenance')) tagStyle = "bg-cyan-600 text-white border-cyan-500 shadow-cyan-900/20";
+                            
+                            return (
+                              <span 
+                                key={index} 
+                                className={`text-[9px] font-black px-3 py-1 rounded-full border shadow-lg ${tagStyle} backdrop-blur-sm tracking-widest transition-all duration-300 hover:scale-110`}
+                                style={{ textShadow: tagStyle.includes('text-white') ? '0 1px 2px rgba(0,0,0,0.3)' : 'none' }}
+                              >
+                                {tag.toUpperCase()}
+                              </span>
+                            );
+                          });
+                        } catch (e) { return null; }
+                      })()}
+                    </div>
                   </div>
 
                   <div className="p-6 flex flex-col flex-grow">
