@@ -126,7 +126,7 @@ const specTemplates: Record<string, {key: string, value: string, placeholder?: s
 };
 
 const categoryMap: Record<string, number> = {
-  'tire': 1, 'wheel': 2, 'oil': 3, 'shock': 4, 'brake': 5, 'battery': 6
+  'tire': 1, 'wheel': 2, 'oil': 3, 'shock': 4, 'brake': 5, 'battery': 6, 'enginepart_replacement': 7, 'performance_upgrade': 8
 };
 
 const getCategoryName = (id: number) => {
@@ -705,6 +705,8 @@ export default function AdminProducts() {
                         <option value="brake">เบรก (Brakes)</option>
                         <option value="battery">แบตเตอรี่ (Batteries)</option>
                         <option value="wheel">แม็ก (Wheels)</option>
+                        <option value="enginepart_replacement">อะไหล่ซ่อมบำรุง (Service Part)</option>
+                        <option value="performance_upgrade">อะไหล่เสริมพละกำลังรถ (Performance)</option>
                       </select>
                       <ChevronDown className="w-5 h-5 text-red-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
