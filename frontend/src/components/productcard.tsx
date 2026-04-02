@@ -38,9 +38,13 @@ export default function ProductCard({
             {tags.map((tag, index) => {
               // กำหนดสีป้ายตามคำ
               let tagColor = "bg-gray-800 text-gray-300 border-gray-700";
-              if (tag.toLowerCase() === 'new') tagColor = "bg-red-900/50 text-red-400 border-red-800";
-              if (tag.toLowerCase() === 'sport') tagColor = "bg-blue-900/50 text-blue-400 border-blue-800";
-              if (tag.toLowerCase() === 'suv') tagColor = "bg-green-900/50 text-green-400 border-green-800";
+              const lTag = tag.toLowerCase();
+              if (lTag === 'new') tagColor = "bg-red-900/50 text-red-400 border-red-800";
+              else if (lTag === 'sport') tagColor = "bg-blue-900/50 text-blue-400 border-blue-800";
+              else if (lTag === 'suv') tagColor = "bg-green-900/50 text-green-400 border-green-800";
+              else if (lTag === 'soft') tagColor = "bg-purple-900/50 text-purple-400 border-purple-800";
+              else if (lTag === 'eco') tagColor = "bg-emerald-900/50 text-emerald-400 border-emerald-800";
+              else if (lTag === 'best seller') tagColor = "bg-amber-900/50 text-amber-400 border-amber-800";
               
               return (
                 <span 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
 import CompareBar from '../components/CompareBar';
@@ -375,6 +375,7 @@ export default function ProductsPage() {
   const [selectedFunctions, setSelectedFunctions] = useState<string[]>([]);
   const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const [searchParams] = useSearchParams();
   const location = useLocation();
   const { addToCompare, isInCompare } = useCompare();
 
@@ -418,6 +419,13 @@ export default function ProductsPage() {
 
     fetchProducts();
   }, []);
+  useEffect(() => {
+    const categoryParam = searchParams.get('category');
+    if (categoryParam && categoryMap[categoryParam]) {
+      setCategoryFilter(categoryParam);
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     if (location.state && location.state.selectedBrand) {
       setSearchTerm(location.state.selectedBrand); // เอาชื่อแบรนด์ยัดใส่ช่องค้นหาเลย
@@ -484,7 +492,7 @@ export default function ProductsPage() {
     <div className="min-h-screen flex flex-col bg-[#0a0a0a] overflow-hidden font-sans">
       <Navbar />
 
-      {/* Hero Image Section (ใช้รูปเครื่องยนต์ที่มีอยู่แทนไปก่อน) */}
+      {/* Hero Image Section */}
       <div className="w-full h-80 md:h-96 relative border-b-4 border-red-600">
         <img
           src="/CarPart/BG_Search_menu.png"
@@ -494,340 +502,108 @@ export default function ProductsPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/80"></div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 flex-grow">
         {/* Search and Filter Section */}
-        <div className="flex flex-col lg:flex-row gap-6 mb-8">
-
-          {/* Sidebar filters (hidden base, popup used instead) */}
-          <aside className="hidden" aria-hidden="true">
-            <h3 className="text-white font-bold text-lg mb-2">ตัวกรองสินค้า</h3>
-
-            <div className="space-y-2">
-              <h4 className="text-gray-300 text-sm font-semibold">หมวดหมู่</h4>
-              {allCategories.map((category) => (
-                <label key={category} className="flex items-center gap-2 text-gray-200 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={selectedCategories.includes(category)}
-                    onChange={() => {
-                      setSelectedCategories((prev) =>
-                        prev.includes(category)
-                          ? prev.filter((c) => c !== category)
-                          : [...prev, category]
-                      );
-                    }}
-                    className="form-checkbox text-red-500"
-                  />
-                  {category}
-                </label>
-              ))}
+        <div className="flex flex-col space-y-4 mb-8">
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                placeholder="ค้นหาอะไหล่"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-[#1a1a1a] text-gray-300 border border-gray-700 rounded-md py-3 px-4 focus:outline-none focus:border-red-600"
+              />
+              <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-red-600 w-5 h-5 cursor-pointer" />
             </div>
-          
-
-            <div className="space-y-2">
-              <h4 className="text-gray-300 text-sm font-semibold">ย่อยหมวดหมู่</h4>
-              {allSubcategories.map((subcategory) => (
-                <label key={subcategory} className="flex items-center gap-2 text-gray-200 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={selectedSubcategories.includes(subcategory)}
-                    onChange={() => {
-                      setSelectedSubcategories((prev) =>
-                        prev.includes(subcategory)
-                          ? prev.filter((s) => s !== subcategory)
-                          : [...prev, subcategory]
-                      );
-                    }}
-                    className="form-checkbox text-red-500"
-                  />
-                  {subcategory}
-                </label>
-              ))}
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="text-gray-300 text-sm font-semibold">แบรนด์</h4>
-              {allBrands.map((brand) => (
-                <label key={brand} className="flex items-center gap-2 text-gray-200 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={selectedBrands.includes(brand)}
-                    onChange={() => {
-                      setSelectedBrands((prev) =>
-                        prev.includes(brand)
-                          ? prev.filter((b) => b !== brand)
-                          : [...prev, brand]
-                      );
-                    }}
-                    className="form-checkbox text-red-500"
-                  />
-                  {brand}
-                </label>
-              ))}
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="text-gray-300 text-sm font-semibold">Function</h4>
-              {allFunctions.map((func) => (
-                <label key={func} className="flex items-center gap-2 text-gray-200 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={selectedFunctions.includes(func)}
-                    onChange={() => {
-                      setSelectedFunctions((prev) =>
-                        prev.includes(func)
-                          ? prev.filter((f) => f !== func)
-                          : [...prev, func]
-                      );
-                    }}
-                    className="form-checkbox text-red-500"
-                  />
-                  {func}
-                </label>
-              ))}
-            </div>
-
             <button
-              onClick={() => {
-                setSelectedCategories([]);
-                setSelectedSubcategories([]);
-                setSelectedBrands([]);
-                setSelectedFunctions([]);
-                setSelectedFunctions([]);
-                setCategoryFilter('');
-              }}
-              className="w-full py-2 text-sm font-semibold text-white bg-red-600 rounded-md hover:bg-red-500 transition-colors"
+              onClick={() => setIsFilterPopupOpen(true)}
+              className="py-3 px-4 bg-red-600 hover:bg-red-500 rounded-md text-white text-sm font-semibold whitespace-nowrap"
             >
-              ล้างตัวกรอง
+              กรองสินค้า
             </button>
-          </aside>
-
-          <div className="w-full space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="relative flex-1">
-                <input
-                  type="text"
-                  placeholder="ค้นหาอะไหล่"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-[#1a1a1a] text-gray-300 border border-gray-700 rounded-md py-3 px-4 focus:outline-none focus:border-red-600"
-                />
-                <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-red-600 w-5 h-5 cursor-pointer" />
-              </div>
-              <button
-                onClick={() => setIsFilterPopupOpen(true)}
-                className="py-3 px-4 bg-red-600 hover:bg-red-500 rounded-md text-white text-sm font-semibold"
-              >
-                กรองสินค้า
-              </button>
-            </div>
-
-            {/* Dropdown category filter */}
-            {/* Dropdown category filter (Custom แบบมี Scrollbar เลื่อนขึ้นลงได้) */}
-            <div className="relative w-full md:w-[300px]">
-              {/* CSS สำหรับแต่ง Scrollbar ให้เข้ากับธีมดำ-แดง */}
-              <style>{`
-                .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-                .custom-scrollbar::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 4px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #dc2626; }
-              `}</style>
-
-              {/* ปุ่มกดเปิด/ปิด Dropdown */}
-              <div
-                onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
-                className="w-full flex justify-between items-center bg-[#1a1a1a] text-gray-300 border border-gray-700 rounded-md py-3 px-4 cursor-pointer hover:border-red-600 transition-colors"
-              >
-                <span className="truncate">
-                  {categoryFilter === '' ? 'หมวดหมู่อะไหล่ทั้งหมด' : 
-                   categoryFilter === 'tire' ? 'ยางรถยนต์' :
-                   categoryFilter === 'oil' ? 'น้ำมันเครื่อง' :
-                   categoryFilter === 'shock' ? 'โช้คอัพ' :
-                   categoryFilter === 'brake' ? 'เบรก' :
-                   categoryFilter === 'battery' ? 'แบตเตอรี่' :
-                   categoryFilter === 'wheel' ? 'แม็ก' :
-                   categoryFilter === 'enginepart_replacement' ? 'ชิ้นส่วนเครื่องยนต์' :
-                   categoryFilter === 'performance_upgrade' ? 'อะไหล่เสริมพละกำลังรถ' : 'หมวดหมู่อะไหล่'}
-                </span>
-                <ChevronDown className={`text-red-600 w-5 h-5 flex-shrink-0 transition-transform duration-300 ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} />
-              </div>
-
-              {/* รายการเมนูที่จะคลี่ออกมา (มี max-h-60 และ overflow-y-auto ทำให้เลื่อนได้) */}
-              {isCategoryDropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-full bg-[#1a1a1a] border border-gray-700 rounded-md shadow-2xl z-[1000] max-h-60 overflow-y-auto custom-scrollbar">
-                  {[
-                    { value: '', label: 'หมวดหมู่อะไหล่ทั้งหมด' },
-                    { value: 'tire', label: 'ยางรถยนต์' },
-                    { value: 'oil', label: 'น้ำมันเครื่อง' },
-                    { value: 'shock', label: 'โช้คอัพ' },
-                    { value: 'brake', label: 'เบรก' },
-                    { value: 'battery', label: 'แบตเตอรี่' },
-                    { value: 'wheel', label: 'แม็ก' },
-                    { value: 'enginepart_replacement', label: 'ชิ้นส่วนเครื่องยนต์' },
-                    { value: 'performance_upgrade', label: 'อะไหล่เสริมพละกำลังรถ' }
-                  ].map((option) => (
-                    <div
-                      key={option.value}
-                      onClick={() => {
-                        setCategoryFilter(option.value);
-                        setIsCategoryDropdownOpen(false); // เลือกเสร็จปุ๊บ ปิดเมนูทันที
-                      }}
-                      className={`px-4 py-3 cursor-pointer transition-colors ${
-                        categoryFilter === option.value
-                          ? 'bg-red-600 text-white font-bold' // ไฮไลท์สีแดงถ้ากำลังเลือกอันนี้อยู่
-                          : 'text-gray-300 hover:bg-gray-800 hover:text-red-500'
-                      }`}
-                    >
-                      {option.label}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-        </div>
-
-        {/* Filter Popup */}
-        {isFilterPopupOpen && (
-          <div className="fixed inset-0 bg-black/70 z-[1000] flex items-center justify-center p-4">
-            <div className="w-full max-w-lg bg-[#121212] border border-gray-800 rounded-xl p-5">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-white font-bold text-lg">ตัวกรองสินค้า</h3>
-                <button
-                  onClick={() => setIsFilterPopupOpen(false)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  ปิด
-                </button>
-              </div>
-
-              <div className="space-y-4 max-h-[70vh] overflow-auto pr-2">
-                <div className="space-y-2">
-                  <h4 className="text-gray-300 text-sm font-semibold">หมวดหมู่</h4>
-                  {allCategories.map((category) => (
-                    <label key={category} className="flex items-center gap-2 text-gray-200 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={selectedCategories.includes(category)}
-                        onChange={() => {
-                          setSelectedCategories((prev) =>
-                            prev.includes(category)
-                              ? prev.filter((c) => c !== category)
-                              : [...prev, category]
-                          );
-                        }}
-                        className="form-checkbox text-red-500"
-                      />
-                      {category}
-                    </label>
-                  ))}
-                </div>
-
-                <div className="space-y-2">
-                  <h4 className="text-gray-300 text-sm font-semibold">ย่อยหมวดหมู่</h4>
-                  {allSubcategories.map((subcategory) => (
-                    <label key={subcategory} className="flex items-center gap-2 text-gray-200 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={selectedSubcategories.includes(subcategory)}
-                        onChange={() => {
-                          setSelectedSubcategories((prev) =>
-                            prev.includes(subcategory)
-                              ? prev.filter((s) => s !== subcategory)
-                              : [...prev, subcategory]
-                          );
-                        }}
-                        className="form-checkbox text-red-500"
-                      />
-                      {subcategory}
-                    </label>
-                  ))}
-                </div>
-
-                <div className="space-y-2">
-                  <h4 className="text-gray-300 text-sm font-semibold">แบรนด์</h4>
-                  {allBrands.map((brand) => (
-                    <label key={brand} className="flex items-center gap-2 text-gray-200 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={selectedBrands.includes(brand)}
-                        onChange={() => {
-                          setSelectedBrands((prev) =>
-                            prev.includes(brand)
-                              ? prev.filter((b) => b !== brand)
-                              : [...prev, brand]
-                          );
-                        }}
-                        className="form-checkbox text-red-500"
-                      />
-                      {brand}
-                    </label>
-                  ))}
-                </div>
-
-                <div className="space-y-2">
-                  <h4 className="text-gray-300 text-sm font-semibold">Function</h4>
-                  {allFunctions.map((func) => (
-                    <label key={func} className="flex items-center gap-2 text-gray-200 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={selectedFunctions.includes(func)}
-                        onChange={() => {
-                          setSelectedFunctions((prev) =>
-                            prev.includes(func)
-                              ? prev.filter((f) => f !== func)
-                              : [...prev, func]
-                          );
-                        }}
-                        className="form-checkbox text-red-500"
-                      />
-                      {func}
-                    </label>
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => {
-                    setSelectedCategories([]);
-                    setSelectedSubcategories([]);
-                    setSelectedBrands([]);
-                    setSelectedFunctions([]);
-                    setCategoryFilter('');
-                  }}
-                  className="w-full py-2 text-sm font-semibold text-white bg-red-600 rounded-md hover:bg-red-500 transition-colors"
-                >
-                  ล้างตัวกรอง
-                </button>
-              </div>
-            </div>
           </div>
-        )}
+
+          {/* Dropdown category filter */}
+          <div className="relative w-full md:w-[300px]">
+            <style>{`
+              .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+              .custom-scrollbar::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 4px; }
+              .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+              .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #dc2626; }
+            `}</style>
+
+            <div
+              onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+              className="w-full flex justify-between items-center bg-[#1a1a1a] text-gray-300 border border-gray-700 rounded-md py-3 px-4 cursor-pointer hover:border-red-600 transition-colors"
+            >
+              <span className="truncate">
+                {categoryFilter === '' ? 'หมวดหมู่อะไหล่ทั้งหมด' : 
+                 categoryFilter === 'tire' ? 'ยางรถยนต์' :
+                 categoryFilter === 'oil' ? 'น้ำมันเครื่อง' :
+                 categoryFilter === 'shock' ? 'โช้คอัพ' :
+                 categoryFilter === 'brake' ? 'เบรก' :
+                 categoryFilter === 'battery' ? 'แบตเตอรี่' :
+                 categoryFilter === 'wheel' ? 'แม็ก' :
+                 categoryFilter === 'enginepart_replacement' ? 'ชิ้นส่วนเครื่องยนต์' :
+                 categoryFilter === 'performance_upgrade' ? 'อะไหล่เสริมพละกำลังรถ' : 'หมวดหมู่อะไหล่'}
+              </span>
+              <ChevronDown className={`text-red-600 w-5 h-5 flex-shrink-0 transition-transform duration-300 ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} />
+            </div>
+
+            {isCategoryDropdownOpen && (
+              <div className="absolute top-full left-0 mt-2 w-full bg-[#1a1a1a] border border-gray-700 rounded-md shadow-2xl z-[1000] max-h-60 overflow-y-auto custom-scrollbar">
+                {[
+                  { value: '', label: 'หมวดหมู่อะไหล่ทั้งหมด' },
+                  { value: 'tire', label: 'ยางรถยนต์' },
+                  { value: 'oil', label: 'น้ำมันเครื่อง' },
+                  { value: 'shock', label: 'โช้คอัพ' },
+                  { value: 'brake', label: 'เบรก' },
+                  { value: 'battery', label: 'แบตเตอรี่' },
+                  { value: 'wheel', label: 'แม็ก' },
+                  { value: 'enginepart_replacement', label: 'ชิ้นส่วนเครื่องยนต์' },
+                  { value: 'performance_upgrade', label: 'อะไหล่เสริมพละกำลังรถ' }
+                ].map((option) => (
+                  <div
+                    key={option.value}
+                    onClick={() => {
+                      setCategoryFilter(option.value);
+                      setIsCategoryDropdownOpen(false);
+                    }}
+                    className={`px-4 py-3 cursor-pointer transition-colors ${
+                      categoryFilter === option.value
+                        ? 'bg-red-600 text-white font-bold'
+                        : 'text-gray-300 hover:bg-gray-800 hover:text-red-500'
+                    }`}
+                  >
+                    {option.label}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.length === 0 ? (
-            <div className="col-span-full text-center text-gray-400">ไม่พบสินค้าในหมวดหมู่นี้</div>
+            <div className="col-span-full py-40 text-center">
+              <p className="text-gray-400 text-xl font-medium tracking-wide">ไม่พบสินค้าในหมวดหมู่นี้</p>
+            </div>
           ) : (
             filteredProducts.map((product) => (
               <div key={product.id} className="bg-[#121212] border border-gray-800 hover:border-red-600/50 rounded-xl overflow-hidden flex flex-col shadow-2xl transition-all duration-300 group/card relative">
-                
-                
-                {/* Clickable Area: Image & Top Info */}
                 <Link to={`/product/${product.id}`} className="flex flex-col flex-grow">
-                  {/* Product Image (White Background Area) */}
                   <div className="bg-white p-6 h-64 flex items-center justify-center relative overflow-hidden">
                     <img 
                       src={product.imageUrl} 
                       alt={product.name} 
                       className="max-h-full max-w-full object-contain drop-shadow-2xl group-hover/card:scale-110 transition-transform duration-500" 
                     />
-                    
-                    {/* Hover Overlay Gradient */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
                   </div>
 
-                  {/* Product Details Section */}
                   <div className="p-6 flex flex-col flex-grow">
-                    {/* Brand Logo & Name */}
                     <div className="h-10 mb-5 flex items-center justify-start gap-4">
                       {getBrandLogo(product.brandName) ? (
                         <div className="bg-white rounded px-3 py-1.5 flex items-center justify-center h-full border border-gray-100 shadow-sm">
@@ -848,17 +624,14 @@ export default function ProductsPage() {
                       </div>
                     </div>
 
-                    {/* Title */}
                     <h3 className="text-xl font-bold text-white mb-3 line-clamp-2 group-hover/card:text-red-500 transition-colors">
                       {product.name}
                     </h3>
 
-                    {/* Description */}
                     <p className="text-gray-400 text-xs mb-6 flex-grow leading-relaxed line-clamp-3">
                       {product.description}
                     </p>
 
-                    {/* Price Row */}
                     <div className="flex justify-between items-end mt-auto">
                       <div className="flex flex-col">
                         {(product.promoPrice ?? 0) > 0 && (product.promoPrice ?? 0) < (product.basePrice ?? 0) ? (
@@ -882,13 +655,9 @@ export default function ProductsPage() {
                   </div>
                 </Link>
 
-                {/* Bottom Actions Area */}
                 <div className="px-6 pb-6">
                    <div className="w-full h-px bg-gray-800 mb-6"></div>
-
-                   {/* Action Buttons: Kept outside the main Link */}
                    <div className="flex flex-col gap-3">
-                      {/* Order Button */}
                       <a
                         href={product.affiliateLink || `/product/${product.id}`}
                         target={product.affiliateLink ? '_blank' : undefined}
@@ -902,7 +671,6 @@ export default function ProductsPage() {
                         </div>
                       </a>
 
-                      {/* Bottom Row Buttons: Compare & Fav */}
                       <div className="flex justify-between items-center gap-3">
                           <button
                             type="button"
@@ -921,20 +689,150 @@ export default function ProductsPage() {
                             <span className="text-[11px] font-black uppercase tracking-widest">{isInCompare(product.id) ? 'เพิ่มแล้ว' : '+ เปรียบเทียบ'}</span>
                             <Plus className={`w-4 h-4 group-hover/comp:rotate-90 transition-transform ${isInCompare(product.id) ? 'hidden' : ''}`} />
                           </button>
-
                       </div>
                    </div>
                 </div>
-                {/* Fav Button Container - Hidden by default, shows on card hover */}
                 <div className="absolute top-4 right-4 z-20 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
                     <FavButton productId={product.id} />
                 </div>
               </div>
             ))
-)}
+          )}
         </div>
       </div>
-    </div>
+
+      {/* Filter Popup */}
+      {isFilterPopupOpen && (
+        <div className="fixed inset-0 bg-black/70 z-[1000] flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-[#121212] border border-gray-800 rounded-xl p-5 shadow-2xl">
+            <div className="flex justify-between items-center mb-4 border-b border-gray-800 pb-4">
+              <h3 className="text-white font-bold text-lg">ตัวกรองสินค้า</h3>
+              <button
+                onClick={() => setIsFilterPopupOpen(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+                aria-label="Close filters"
+              >
+                <Plus className="w-6 h-6 rotate-45" />
+              </button>
+            </div>
+
+            <div className="space-y-6 max-h-[70vh] overflow-auto pr-2 custom-scrollbar">
+              <div className="space-y-3">
+                <h4 className="text-red-500 text-xs font-black uppercase tracking-widest">หมวดหมู่</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {allCategories.map((category) => (
+                    <label key={category} className="flex items-center gap-2 text-gray-300 text-sm cursor-pointer hover:text-white transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={selectedCategories.includes(category)}
+                        onChange={() => {
+                          setSelectedCategories((prev) =>
+                            prev.includes(category)
+                              ? prev.filter((c) => c !== category)
+                              : [...prev, category]
+                          );
+                        }}
+                        className="form-checkbox text-red-600 rounded bg-gray-900 border-gray-700"
+                      />
+                      {category}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-red-500 text-xs font-black uppercase tracking-widest">ย่อยหมวดหมู่</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {allSubcategories.map((subcategory) => (
+                    <label key={subcategory} className="flex items-center gap-2 text-gray-300 text-sm cursor-pointer hover:text-white transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={selectedSubcategories.includes(subcategory)}
+                        onChange={() => {
+                          setSelectedSubcategories((prev) =>
+                            prev.includes(subcategory)
+                              ? prev.filter((s) => s !== subcategory)
+                              : [...prev, subcategory]
+                          );
+                        }}
+                        className="form-checkbox text-red-600 rounded bg-gray-900 border-gray-700"
+                      />
+                      {subcategory}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-red-500 text-xs font-black uppercase tracking-widest">แบรนด์</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {allBrands.map((brand) => (
+                    <label key={brand} className="flex items-center gap-2 text-gray-300 text-sm cursor-pointer hover:text-white transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={selectedBrands.includes(brand)}
+                        onChange={() => {
+                          setSelectedBrands((prev) =>
+                            prev.includes(brand)
+                              ? prev.filter((b) => b !== brand)
+                              : [...prev, brand]
+                          );
+                        }}
+                        className="form-checkbox text-red-600 rounded bg-gray-900 border-gray-700"
+                      />
+                      {brand}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-red-500 text-xs font-black uppercase tracking-widest">ฟังก์ชัน</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {allFunctions.map((func) => (
+                    <label key={func} className="flex items-center gap-2 text-gray-300 text-sm cursor-pointer hover:text-white transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={selectedFunctions.includes(func)}
+                        onChange={() => {
+                          setSelectedFunctions((prev) =>
+                            prev.includes(func)
+                              ? prev.filter((f) => f !== func)
+                              : [...prev, func]
+                          );
+                        }}
+                        className="form-checkbox text-red-600 rounded bg-gray-900 border-gray-700"
+                      />
+                      {func}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex gap-3">
+              <button
+                onClick={() => {
+                  setSelectedCategories([]);
+                  setSelectedSubcategories([]);
+                  setSelectedBrands([]);
+                  setSelectedFunctions([]);
+                  setCategoryFilter('');
+                }}
+                className="flex-1 py-3 text-sm font-bold text-gray-400 bg-gray-900 rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                ล้างตัวกรอง
+              </button>
+              <button
+                onClick={() => setIsFilterPopupOpen(false)}
+                className="flex-2 px-8 py-3 text-sm font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all shadow-lg shadow-red-600/20 active:scale-95"
+              >
+                ดูสินค้า
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <CompareBar />
       <Footer />

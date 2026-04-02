@@ -6,10 +6,10 @@ import { Link } from 'react-router-dom';
 
 export default function HomePage() {
   const mockProducts = [
-    { id: 1, name: 'MICHELIN Pilot Sport 5 - 225/40ZR18', price: 6500, imageUrl: '/CarPart/tire_rebg.png', tags: ['New', 'Sport'] },
-    { id: 2, name: 'BOSCH Hightec Silver Battery', price: 3200, imageUrl: '/CarPart/Car_Battery.png', tags: ['Best Seller'] },
-    { id: 3, name: 'Mobil 1 Full Synthetic 5W-30', price: 2150, imageUrl: '/CarPart/oilcan.png', tags: ['Eco'] },
-    { id: 4, name: 'Brembo Ceramic Brake Pads', price: 4500, imageUrl: '/CarPart/car_break.png', tags: ['Sport', 'New'] },
+    { id: 1, name: 'YOKOHAMA Geolandar CV G058 265/60R18', price: 6137, imageUrl: 'http://localhost:8080/uploads/product_1774988948225.png', tags: ['NEW', 'SOFT', 'SUV'] },
+    { id: 2, name: 'MIC 265/60R18 110H PRIMACY SUV+ MI', price: 8950, imageUrl: 'http://localhost:8080/uploads/product_1775004974288.png', tags: ['NEW', 'SUV', 'SOFT'] },
+    { id: 3, name: '265/60R18 ECOPIA EP H/L 001', price: 7750, imageUrl: 'http://localhost:8080/uploads/product_1775005410532.png', tags: ['NEW', 'ECO', 'DURABLE'] },
+    { id: 4, name: 'ล้อแม็กซ์18 M-IFS 5x114', price: 13900, imageUrl: 'http://localhost:8080/uploads/product_1775007398924.png', tags: ['NEW', 'SOFT'] },
   ];
 
   const brands = [
@@ -102,37 +102,37 @@ export default function HomePage() {
         <h2 className="text-2xl md:text-3xl font-bold text-red-600 mb-6 w-full max-w-5xl text-left px-2">หมวดหมู่อะไหล่</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-5xl">
           {/* ยางรถยนต์ */}
-          <Link to="/products" className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{ position: 'relative' }}>
+          <Link to="/products?category=tire" className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{ position: 'relative' }}>
             <span className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ border: '2px solid transparent', background: 'linear-gradient(#181818,#181818) padding-box,linear-gradient(90deg,#EC221F 11%,#861311 89%) border-box' }}></span>
             <img src="/CarPart/tire_rebg.png" alt="ยางรถยนต์" className="w-20 h-20 object-contain mb-3 relative z-10" />
             <span className="text-lg text-white font-semibold relative z-10">ยางรถยนต์</span>
           </Link>
           {/* น้ำมันเครื่อง */}
-          <Link to="/products" className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{ position: 'relative' }}>
+          <Link to="/products?category=oil" className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{ position: 'relative' }}>
             <span className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ border: '2px solid transparent', background: 'linear-gradient(#181818,#181818) padding-box,linear-gradient(90deg,#EC221F 11%,#861311 89%) border-box' }}></span>
             <img src="/CarPart/oilcan.png" alt="น้ำมันเครื่อง" className="w-20 h-20 object-contain mb-3 relative z-10" />
             <span className="text-lg text-white font-semibold relative z-10">น้ำมันเครื่อง</span>
           </Link>
           {/* โช้คอัพ */}
-          <Link to="/products" className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{ position: 'relative' }}>
+          <Link to="/products?category=shock" className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{ position: 'relative' }}>
             <span className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ border: '2px solid transparent', background: 'linear-gradient(#181818,#181818) padding-box,linear-gradient(90deg,#EC221F 11%,#861311 89%) border-box' }}></span>
             <img src="/CarPart/shock_absorbers.png" alt="โช้คอัพ" className="w-20 h-20 object-contain mb-3 relative z-10" />
             <span className="text-lg text-white font-semibold relative z-10">โช้คอัพ</span>
           </Link>
           {/* เบรก */}
-          <Link to="/products" className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{ position: 'relative' }}>
+          <Link to="/products?category=brake" className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{ position: 'relative' }}>
             <span className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ border: '2px solid transparent', background: 'linear-gradient(#181818,#181818) padding-box,linear-gradient(90deg,#EC221F 11%,#861311 89%) border-box' }}></span>
             <img src="/CarPart/car_break.png" alt="เบรก" className="w-20 h-20 object-contain mb-3 relative z-10" />
             <span className="text-lg text-white font-semibold relative z-10">เบรก</span>
           </Link>
           {/* แบตเตอรี่ */}
-          <Link to="/products" className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{ position: 'relative' }}>
+          <Link to="/products?category=battery" className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{ position: 'relative' }}>
             <span className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ border: '2px solid transparent', background: 'linear-gradient(#181818,#181818) padding-box,linear-gradient(90deg,#EC221F 11%,#861311 89%) border-box' }}></span>
             <img src="/CarPart/Car_Battery.png" alt="แบตเตอรี่" className="w-20 h-20 object-contain mb-3 relative z-10" />
             <span className="text-lg text-white font-semibold relative z-10">แบตเตอรี่</span>
           </Link>
           {/* แม็ก */}
-          <Link to="/products" className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{ position: 'relative' }}>
+          <Link to="/products?category=wheel" className="bg-[#181818] rounded-2xl flex flex-col items-center py-6 shadow-lg hover:scale-105 transition cursor-pointer group relative overflow-hidden" style={{ position: 'relative' }}>
             <span className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ border: '2px solid transparent', background: 'linear-gradient(#181818,#181818) padding-box,linear-gradient(90deg,#EC221F 11%,#861311 89%) border-box' }}></span>
             <img src="/CarPart/car_rims.png" alt="แม็ก" className="w-20 h-20 object-contain mb-3 relative z-10" />
             <span className="text-lg text-white font-semibold relative z-10">แม็ก</span>
@@ -205,31 +205,30 @@ export default function HomePage() {
             <div className="flex overflow-x-auto gap-4 md:gap-6 pb-8 snap-x snap-mandatory hide-scrollbar">
               
               {/* หมวดหมู่ 1 */}
-              <Link to="/products" className="min-w-[160px] md:min-w-[240px] flex-shrink-0 snap-center bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl cursor-pointer">
+              <Link to="/products?category=tire" className="min-w-[160px] md:min-w-[240px] flex-shrink-0 snap-center bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl cursor-pointer">
                 <Disc className="w-12 h-12 text-red-600 group-hover:scale-125 transition-transform duration-300" />
                 <span className="text-white font-bold text-lg group-hover:text-red-500 text-center">ล้อและยาง</span>
               </Link>
 
               {/* หมวดหมู่ 2 */}
-              <Link to="/products" className="min-w-[160px] md:min-w-[240px] flex-shrink-0 snap-center bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl cursor-pointer">
+              <Link to="/products?category=oil" className="min-w-[160px] md:min-w-[240px] flex-shrink-0 snap-center bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl cursor-pointer">
                 <Droplet className="w-12 h-12 text-red-600 group-hover:scale-125 transition-transform duration-300" />
                 <span className="text-white font-bold text-lg group-hover:text-red-500 text-center">น้ำมันเครื่อง</span>
               </Link>
 
               {/* หมวดหมู่ 3 */}
-              <Link to="/products" className="min-w-[160px] md:min-w-[240px] flex-shrink-0 snap-center bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl cursor-pointer">
+              <Link to="/products?category=shock" className="min-w-[160px] md:min-w-[240px] flex-shrink-0 snap-center bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl cursor-pointer">
                 <Settings className="w-12 h-12 text-red-600 group-hover:scale-125 transition-transform duration-300" />
                 <span className="text-white font-bold text-lg group-hover:text-red-500 text-center">โช้คอัพ / เบรก</span>
               </Link>
 
               {/* หมวดหมู่ 4 */}
-              <Link to="/products" className="min-w-[160px] md:min-w-[240px] flex-shrink-0 snap-center bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl cursor-pointer">
+              <Link to="/products?category=battery" className="min-w-[160px] md:min-w-[240px] flex-shrink-0 snap-center bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl cursor-pointer">
                 <Zap className="w-12 h-12 text-red-600 group-hover:scale-125 transition-transform duration-300" />
                 <span className="text-white font-bold text-lg group-hover:text-red-500 text-center">แบตเตอรี่</span>
               </Link>
 
               {/* ================= ตัวอย่างการเพิ่มหมวดหมู่ใหม่ ================= */}
-              {/* ถ้ามีหมวดหมู่ใหม่ ก็แค่ก๊อปปี้บล็อกนี้ไปวางต่อท้ายได้เรื่อยๆ เลยครับ */}
               <Link to="/products" className="min-w-[160px] md:min-w-[240px] flex-shrink-0 snap-center bg-[#1a1a1e]/80 backdrop-blur-md border border-gray-800 hover:border-red-600 p-8 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-300 hover:-translate-y-2 shadow-2xl cursor-pointer">
                 <Settings className="w-12 h-12 text-red-600 group-hover:scale-125 transition-transform duration-300" />
                 <span className="text-white font-bold text-lg group-hover:text-red-500 text-center">ชิ้นส่วนเครื่องยนต์</span>

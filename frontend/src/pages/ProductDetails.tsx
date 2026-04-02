@@ -198,11 +198,21 @@ export default function ProductDetailsPage() {
             {/* Tags */}
             {tags.length > 0 && (
               <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
-                {tags.map((tag, i) => (
-                  <span key={i} className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded shadow-lg uppercase tracking-wide">
-                    {tag}
-                  </span>
-                ))}
+                {tags.map((tag, i) => {
+                  let tagColor = "bg-red-600 text-white";
+                  const lTag = tag.toLowerCase();
+                  if (lTag === 'sport') tagColor = "bg-blue-600 text-white";
+                  else if (lTag === 'suv') tagColor = "bg-green-600 text-white";
+                  else if (lTag === 'soft') tagColor = "bg-purple-600 text-white";
+                  else if (lTag === 'eco') tagColor = "bg-emerald-600 text-white";
+                  else if (lTag === 'best seller') tagColor = "bg-amber-600 text-white";
+
+                  return (
+                    <span key={i} className={`${tagColor} text-xs font-bold px-3 py-1 rounded shadow-lg uppercase tracking-wide`}>
+                      {tag}
+                    </span>
+                  );
+                })}
               </div>
             )}
 
