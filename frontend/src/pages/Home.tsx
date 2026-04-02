@@ -3,11 +3,13 @@ import Navbar from '../components/navbar';
 import { ArrowLeft, ArrowRight, Settings, Disc, Droplet, Zap } from 'lucide-react';
 import ProductCard from '../components/productcard';
 import Footer from '../components/footer';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { carBrands } from '../data/brandData';
 
 export default function HomePage() {
   const [latestProducts, setLatestProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLatestProducts = async () => {
@@ -37,16 +39,7 @@ export default function HomePage() {
     fetchLatestProducts();
   }, []);
 
-  const brands = [
-    { name: 'Ford', src: '/logos/ford.png' },
-    { name: 'Toyota', src: '/logos/toyota.png' },
-    { name: 'Isuzu', src: '/logos/isuzu.png' },
-    { name: 'Mazda', src: '/logos/mazda.png' },
-    { name: 'Mitsubishi', src: '/logos/mitsubishi.png' },
-    { name: 'Honda', src: '/logos/honda.png' },
-    { name: 'BMW', src: '/logos/bmw.png' },
-    { name: 'Mercedes Benz', src: '/logos/benz.png' },
-  ];
+  const brands = carBrands;
 
   return (
     <div className="min-h-screen flex flex-col bg-black overflow-hidden">
@@ -106,8 +99,12 @@ export default function HomePage() {
           {/* โลโก้แบรนด์ */}
           <div className="flex w-full justify-around items-center px-16 overflow-hidden">
             {brands.map((brand, index) => (
-              <div key={index} className="w-24 h-24 md:w-32 md:h-32 flex items-center justify-center px-4 grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition duration-300 cursor-pointer">
-                <img src={brand.src} alt={brand.name} className="object-contain max-w-full max-h-full" />
+              <div 
+                key={index} 
+                onClick={() => navigate('/products', { state: { selectedBrand: brand.name } })}
+                className="w-24 h-24 md:w-32 md:h-32 flex items-center justify-center px-4 grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition duration-300 cursor-pointer hover:scale-110 active:scale-95"
+              >
+                <img src={brand.bgImage} alt={brand.name} className="object-contain max-w-full max-h-full" />
               </div>
             ))}
           </div>
@@ -196,6 +193,7 @@ export default function HomePage() {
                 price={product.basePrice || product.price}
                 imageUrl={product.imageURL || product.imageUrl}
                 tags={product.tags}
+                originalProduct={product}
               />
             ))
           ) : (

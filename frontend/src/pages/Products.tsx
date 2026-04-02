@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
-import CompareBar from '../components/CompareBar';
 import { Search, ChevronDown, ShoppingCart, Plus } from 'lucide-react';
 import { useCompare } from '../context/CompareContext';
 import { API_BASE_URL } from '../config';
@@ -868,7 +867,6 @@ export default function ProductsPage() {
         </div>
       )}
 
-      <CompareBar />
       <Footer />
     </div>
   );

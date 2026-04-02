@@ -14,6 +14,7 @@ import AdminUserManagementPage from './pages/admin/UserManagement';
 import { AuthProvider } from './context/AuthContext';
 import { CompareProvider } from './context/CompareContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import CompareBar from './components/CompareBar';
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
                </ProtectedRoute>
             } />
           </Routes>
+          <CompareBar />
         </BrowserRouter>
       </CompareProvider>
     </AuthProvider>
